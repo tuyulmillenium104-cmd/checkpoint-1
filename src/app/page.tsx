@@ -27,6 +27,7 @@ import {
 } from '@/lib/events-data'
 import { LanguageProvider, useLanguage, useDayName } from '@/lib/language-context'
 import { PressStart } from '@/components/PressStart'
+import { RoleBadgeTooltip } from '@/components/role-badge-tooltip'
 
 // Get current day in UTC
 function getCurrentUTCDay(): string {
@@ -450,16 +451,18 @@ function EventDetailModal({
           {/* Role Requirement */}
           <div className="flex items-center gap-2 p-3 border-3 border-[#2a2a4e] bg-[#0a0a0f]">
             <Users className="w-5 h-5 text-[#8888aa]" />
-            <span 
-              className="text-sm font-pixel px-3 py-1 border-3"
-              style={{ 
-                borderColor: event.roleColor,
-                color: event.roleColor,
-                backgroundColor: event.roleColor + '20'
-              }}
-            >
-              {event.roleReq}
-            </span>
+            <RoleBadgeTooltip roleName={event.roleReq} roleColor={event.roleColor} t={t}>
+              <span 
+                className="text-sm font-pixel px-3 py-1 border-3 cursor-pointer"
+                style={{ 
+                  borderColor: event.roleColor,
+                  color: event.roleColor,
+                  backgroundColor: event.roleColor + '20'
+                }}
+              >
+                {event.roleReq}
+              </span>
+            </RoleBadgeTooltip>
           </div>
 
           {/* Description */}
@@ -1697,16 +1700,18 @@ function AppContent() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span 
-                  className={`text-sm px-4 py-2 ${isGamingMode ? 'font-pixel border-3' : 'rounded-lg border font-medium'}`}
-                  style={{ 
-                    borderColor: nextEvent.roleColor,
-                    color: nextEvent.roleColor,
-                    backgroundColor: nextEvent.roleColor + '20'
-                  }}
-                >
-                  {nextEvent.roleReq}
-                </span>
+                <RoleBadgeTooltip roleName={nextEvent.roleReq} roleColor={nextEvent.roleColor} t={t}>
+                  <span 
+                    className={`text-sm px-4 py-2 cursor-pointer ${isGamingMode ? 'font-pixel border-3' : 'rounded-lg border font-medium'}`}
+                    style={{ 
+                      borderColor: nextEvent.roleColor,
+                      color: nextEvent.roleColor,
+                      backgroundColor: nextEvent.roleColor + '20'
+                    }}
+                  >
+                    {nextEvent.roleReq}
+                  </span>
+                </RoleBadgeTooltip>
               </div>
             </div>
 
@@ -1849,15 +1854,17 @@ function AppContent() {
                     <Bell className={`w-4 h-4 animate-pulse ${isGamingMode ? 'text-[#39ff14]' : 'text-green-500'}`} />
                   )}
                 </div>
-                <span 
-                  className={`text-xs px-3 py-1 ${isGamingMode ? 'border-2 font-pixel' : 'border rounded-lg'}`}
-                  style={{ 
-                    borderColor: event.roleColor,
-                    color: event.roleColor,
-                  }}
-                >
-                  {event.roleReq}
-                </span>
+                <RoleBadgeTooltip roleName={event.roleReq} roleColor={event.roleColor} t={t}>
+                  <span 
+                    className={`text-xs px-3 py-1 cursor-pointer ${isGamingMode ? 'border-2 font-pixel' : 'border rounded-lg'}`}
+                    style={{ 
+                      borderColor: event.roleColor,
+                      color: event.roleColor,
+                    }}
+                  >
+                    {event.roleReq}
+                  </span>
+                </RoleBadgeTooltip>
               </motion.div>
             ))}
             {todayEvents.length === 0 && (
@@ -1955,16 +1962,18 @@ function AppContent() {
                     </div>
                   </div>
 
-                  <span 
-                    className={`text-xs px-3 py-1 shrink-0 ${isGamingMode ? 'border-2 font-pixel' : 'border rounded-lg'}`}
-                    style={{ 
-                      backgroundColor: event.roleColor + '15',
-                      color: event.roleColor,
-                      borderColor: event.roleColor + '60'
-                    }}
-                  >
-                    {event.roleReq}
-                  </span>
+                  <RoleBadgeTooltip roleName={event.roleReq} roleColor={event.roleColor} t={t}>
+                    <span 
+                      className={`text-xs px-3 py-1 shrink-0 cursor-pointer ${isGamingMode ? 'border-2 font-pixel' : 'border rounded-lg'}`}
+                      style={{ 
+                        backgroundColor: event.roleColor + '15',
+                        color: event.roleColor,
+                        borderColor: event.roleColor + '60'
+                      }}
+                    >
+                      {event.roleReq}
+                    </span>
+                  </RoleBadgeTooltip>
                 </div>
               </motion.div>
             ))}
