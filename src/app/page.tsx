@@ -150,25 +150,6 @@ function PixelDecoration({ className }: { className?: string }) {
   )
 }
 
-// Format duration in minutes to readable string
-function formatDuration(minutes: number): string {
-  if (minutes < 60) {
-    return `${minutes}m`
-  }
-  const hours = Math.floor(minutes / 60)
-  const mins = minutes % 60
-  if (mins === 0) {
-    return `${hours}h`
-  }
-  return `${hours}h ${mins}m`
-}
-
-// Truncate text with ellipsis
-function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text
-  return text.slice(0, maxLength).trim() + '...'
-}
-
 function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -1678,11 +1659,6 @@ function AppContent() {
                     <span className="flex items-center gap-2">
                       <Clock className={`w-4 h-4 ${isGamingMode ? 'text-[#00fff7]' : 'text-primary'}`} />
                       <span className={isGamingMode ? 'text-[#00fff7] font-pixel' : 'text-foreground'}>{formatTimeWithLabel(nextEvent.timeUTC)}</span>
-                      {nextEvent.duration && (
-                        <span className={`text-xs ${isGamingMode ? 'text-[#ffd700]' : 'text-yellow-600 dark:text-yellow-400'}`}>
-                          ({formatDuration(nextEvent.duration)})
-                        </span>
-                      )}
                     </span>
                     <span className="flex items-center gap-2">
                       <Calendar className={`w-4 h-4 ${isGamingMode ? 'text-[#ff00ff]' : 'text-primary'}`} />
@@ -1845,11 +1821,6 @@ function AppContent() {
                       <div className="flex items-center gap-2 mt-0.5">
                         <Clock className={`w-3 h-3 ${isGamingMode ? 'text-[#8888aa]' : 'text-muted-foreground'}`} />
                         <span className={`text-xs ${isGamingMode ? 'text-[#00fff7]' : 'text-primary'}`}>{formatTimeWithLabel(event.timeUTC)}</span>
-                        {event.duration && (
-                          <span className={`text-xs ${isGamingMode ? 'text-[#ffd700]' : 'text-yellow-600 dark:text-yellow-400'}`}>
-                            ({formatDuration(event.duration)})
-                          </span>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -1865,12 +1836,6 @@ function AppContent() {
                     </span>
                   </RoleBadgeTooltip>
                 </div>
-                {/* Description */}
-                {event.description && (
-                  <p className={`text-xs mb-2 ${isGamingMode ? 'text-[#8888aa]' : 'text-muted-foreground'}`}>
-                    {truncateText(event.description, 80)}
-                  </p>
-                )}
                 {/* Rewards */}
                 <div className="flex flex-wrap gap-1.5">
                   {event.hasPOAP && (
@@ -1971,11 +1936,6 @@ function AppContent() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <Clock className={`w-4 h-4 ${isGamingMode ? 'text-[#00fff7]' : 'text-primary'}`} />
                         <span className={`text-sm ${isGamingMode ? 'font-pixel text-[#00fff7]' : 'text-primary'}`}>{formatTimeWithLabel(event.timeUTC)}</span>
-                        {event.duration && (
-                          <span className={`text-xs ${isGamingMode ? 'text-[#ffd700]' : 'text-yellow-600 dark:text-yellow-400'}`}>
-                            ({formatDuration(event.duration)})
-                          </span>
-                        )}
                         {isEventLive(event) && (
                           <span className={`px-2 py-0.5 text-white text-xs uppercase animate-pulse ${isGamingMode ? 'bg-[#ff0040] font-pixel' : 'bg-red-500 rounded-full font-semibold'}`}>LIVE</span>
                         )}
@@ -2003,13 +1963,6 @@ function AppContent() {
                     </span>
                   </RoleBadgeTooltip>
                 </div>
-                
-                {/* Description */}
-                {event.description && (
-                  <p className={`text-xs mb-2 ${isGamingMode ? 'text-[#8888aa]' : 'text-muted-foreground'}`}>
-                    {truncateText(event.description, 100)}
-                  </p>
-                )}
                 
                 {/* Rewards */}
                 <div className="flex flex-wrap gap-1.5">
