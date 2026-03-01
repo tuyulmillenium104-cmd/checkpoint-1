@@ -4,13 +4,11 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { 
-  Clock, Trophy, Bell, Users, ChevronRight, Zap,
+  Clock, Trophy, Bell, Users, Zap,
   Calendar, Sun, Moon,
   Star, Award, BellRing, Check, Globe,
-  Gamepad2, Sword, Shield, Heart, Flame
+  Gamepad2, Sword, Shield, Flame
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -444,13 +442,13 @@ function EventDetailModal({
           {(event.hasPOAP || event.hasInsight || (event.rewards && event.rewards.length > 0)) && (
             <div className="flex flex-wrap gap-2">
               {event.hasPOAP && (
-                <span className="text-[10px] px-3 py-1 border-3 border-[#ff00ff] text-[#ff00ff] font-pixel bg-[#ff00ff]/10">
-                  <Star className="w-3 h-3 inline mr-1" /> POAP
+                <span className="text-sm px-3 py-1.5 border-3 border-[#ff00ff] text-[#ff00ff] font-pixel bg-[#ff00ff]/10">
+                  <Star className="w-4 h-4 inline mr-1" /> POAP
                 </span>
               )}
               {event.hasInsight && (
-                <span className="text-[10px] px-3 py-1 border-3 border-[#00fff7] text-[#00fff7] font-pixel bg-[#00fff7]/10">
-                  <Zap className="w-3 h-3 inline mr-1" /> Insight
+                <span className="text-sm px-3 py-1.5 border-3 border-[#00fff7] text-[#00fff7] font-pixel bg-[#00fff7]/10">
+                  <Zap className="w-4 h-4 inline mr-1" /> Insight
                 </span>
               )}
             </div>
@@ -459,12 +457,12 @@ function EventDetailModal({
           {/* XP Rewards */}
           {event.xpRewards.length > 0 && (
             <div className="space-y-2">
-              <div className="flex items-center justify-between p-2 bg-[#ffd700]/10 border-3 border-[#ffd700]">
-                <h4 className="text-[10px] font-pixel flex items-center gap-2 text-[#ffd700]">
-                  <Trophy className="w-4 h-4" />
+              <div className="flex items-center justify-between p-3 bg-[#ffd700]/10 border-3 border-[#ffd700]">
+                <h4 className="text-sm font-pixel flex items-center gap-2 text-[#ffd700]">
+                  <Trophy className="w-5 h-5" />
                   {t('xpRewards')}
                 </h4>
-                <span className="text-xs font-pixel text-[#ffd700] neon-text-gold">
+                <span className="text-sm font-pixel text-[#ffd700] neon-text-gold">
                   MAX: {maxXP.toLocaleString('en-US')} XP
                 </span>
               </div>
@@ -1837,24 +1835,24 @@ function AppContent() {
                   </RoleBadgeTooltip>
                 </div>
                 {/* Rewards */}
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-2">
                   {event.hasPOAP && (
-                    <span className={`text-[10px] px-2 py-0.5 ${isGamingMode ? 'bg-[#ff00ff]/20 text-[#ff00ff] border border-[#ff00ff]' : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded'}`}>
+                    <span className={`text-sm px-3 py-1 ${isGamingMode ? 'bg-[#ff00ff]/20 text-[#ff00ff] border-2 border-[#ff00ff]' : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-md font-medium'}`}>
                       🎁 POAP
                     </span>
                   )}
                   {event.hasInsight && (
-                    <span className={`text-[10px] px-2 py-0.5 ${isGamingMode ? 'bg-[#00fff7]/20 text-[#00fff7] border border-[#00fff7]' : 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded'}`}>
+                    <span className={`text-sm px-3 py-1 ${isGamingMode ? 'bg-[#00fff7]/20 text-[#00fff7] border-2 border-[#00fff7]' : 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded-md font-medium'}`}>
                       ⚡ Insight
                     </span>
                   )}
                   {event.xpRewards.length > 0 && (
-                    <span className={`text-[10px] px-2 py-0.5 ${isGamingMode ? 'bg-[#39ff14]/20 text-[#39ff14] border border-[#39ff14]' : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded'}`}>
+                    <span className={`text-sm px-3 py-1 ${isGamingMode ? 'bg-[#39ff14]/20 text-[#39ff14] border-2 border-[#39ff14]' : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-md font-medium'}`}>
                       🏆 Max {getMaxXP(event).toLocaleString()} XP
                     </span>
                   )}
                   {event.rewards && event.rewards.length > 0 && !event.hasPOAP && !event.hasInsight && (
-                    <span className={`text-[10px] px-2 py-0.5 ${isGamingMode ? 'bg-[#ffd700]/20 text-[#ffd700] border border-[#ffd700]' : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded'}`}>
+                    <span className={`text-sm px-3 py-1 ${isGamingMode ? 'bg-[#ffd700]/20 text-[#ffd700] border-2 border-[#ffd700]' : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-md font-medium'}`}>
                       {event.rewards.slice(0, 2).join(', ')}
                     </span>
                   )}
@@ -1965,24 +1963,24 @@ function AppContent() {
                 </div>
                 
                 {/* Rewards */}
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-2">
                   {event.hasPOAP && (
-                    <span className={`text-[10px] px-2 py-0.5 ${isGamingMode ? 'bg-[#ff00ff]/20 text-[#ff00ff] border border-[#ff00ff]' : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded'}`}>
+                    <span className={`text-sm px-3 py-1 ${isGamingMode ? 'bg-[#ff00ff]/20 text-[#ff00ff] border-2 border-[#ff00ff]' : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-md font-medium'}`}>
                       🎁 POAP
                     </span>
                   )}
                   {event.hasInsight && (
-                    <span className={`text-[10px] px-2 py-0.5 ${isGamingMode ? 'bg-[#00fff7]/20 text-[#00fff7] border border-[#00fff7]' : 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded'}`}>
+                    <span className={`text-sm px-3 py-1 ${isGamingMode ? 'bg-[#00fff7]/20 text-[#00fff7] border-2 border-[#00fff7]' : 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded-md font-medium'}`}>
                       ⚡ Insight
                     </span>
                   )}
                   {event.xpRewards.length > 0 && (
-                    <span className={`text-[10px] px-2 py-0.5 ${isGamingMode ? 'bg-[#39ff14]/20 text-[#39ff14] border border-[#39ff14]' : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded'}`}>
+                    <span className={`text-sm px-3 py-1 ${isGamingMode ? 'bg-[#39ff14]/20 text-[#39ff14] border-2 border-[#39ff14]' : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-md font-medium'}`}>
                       🏆 Max {getMaxXP(event).toLocaleString()} XP
                     </span>
                   )}
                   {event.rewards && event.rewards.length > 0 && !event.hasPOAP && !event.hasInsight && (
-                    <span className={`text-[10px] px-2 py-0.5 ${isGamingMode ? 'bg-[#ffd700]/20 text-[#ffd700] border border-[#ffd700]' : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded'}`}>
+                    <span className={`text-sm px-3 py-1 ${isGamingMode ? 'bg-[#ffd700]/20 text-[#ffd700] border-2 border-[#ffd700]' : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-md font-medium'}`}>
                       {event.rewards.slice(0, 2).join(', ')}
                     </span>
                   )}
