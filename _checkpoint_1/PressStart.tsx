@@ -9,11 +9,13 @@ interface PressStartProps {
 
 type Phase = 'idle' | 'countdown' | 'blastoff' | 'done'
 
-// Pre-generate deterministic star positions
+// Pre-generate deterministic star positions using a seeded approach
+// This avoids hydration mismatch by using fixed values based on index
 function generateStarPositions(count: number) {
   const stars: Array<{ left: number; top: number; duration: number; delay: number }> = []
   for (let i = 0; i < count; i++) {
-    const seed = i * 9973
+    // Use a simple hash-like function to generate deterministic values
+    const seed = i * 9973 // Prime number for better distribution
     const left = ((seed * 7919) % 10000) / 100
     const top = ((seed * 104729) % 10000) / 100
     const duration = 2 + ((seed * 3571) % 200) / 100
@@ -23,11 +25,24 @@ function generateStarPositions(count: number) {
   return stars
 }
 
+// Generate star positions once outside component to avoid hydration mismatch
 const starPositions = generateStarPositions(50)
 
 export function PressStart({ onComplete }: PressStartProps) {
   const [phase, setPhase] = useState<Phase>('idle')
   const [countdown, setCountdown] = useState(3)
+  const [flameFlicker, setFlameFlicker] = useState(false)
+
+  // Flame flicker animation
+  useEffect(() => {
+    if (phase !== 'idle') return
+    
+    const interval = setInterval(() => {
+      setFlameFlicker(prev => !prev)
+    }, 100)
+    
+    return () => clearInterval(interval)
+  }, [phase])
 
   // Countdown timer
   useEffect(() => {
@@ -39,6 +54,7 @@ export function PressStart({ onComplete }: PressStartProps) {
       }, 800)
       return () => clearTimeout(timer)
     } else {
+      // Countdown finished, start blast off (wrap in timeout to avoid cascading render)
       const timer = setTimeout(() => {
         setPhase('blastoff')
       }, 0)
@@ -61,6 +77,12 @@ export function PressStart({ onComplete }: PressStartProps) {
   const handleClick = useCallback(() => {
     if (phase === 'idle') {
       setPhase('countdown')
+      // Play sound effect if available
+      try {
+        const audio = new Audio('/sounds/coin-insert.mp3')
+        audio.volume = 0.5
+        audio.play().catch(() => {})
+      } catch {}
     }
   }, [phase])
 
@@ -75,7 +97,7 @@ export function PressStart({ onComplete }: PressStartProps) {
         exit={{ opacity: 0, scale: 1.1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Stars background */}
+        {/* Stars background - using pre-generated positions to avoid hydration mismatch */}
         <div className="absolute inset-0 overflow-hidden">
           {starPositions.map((star, i) => (
             <motion.div
@@ -112,6 +134,28 @@ export function PressStart({ onComplete }: PressStartProps) {
                 ease: 'easeInOut',
               }}
             >
+              {/* Flame effect */}
+              <motion.div
+                className="absolute -bottom-4 left-1/2 -translate-x-1/2"
+                animate={{
+                  scale: flameFlicker ? [1, 1.2, 1] : [1, 0.8, 1],
+                  opacity: [0.8, 1, 0.8],
+                }}
+                transition={{
+                  duration: 0.15,
+                }}
+              >
+                <div className="flex gap-0.5">
+                  <div className={`w-4 h-6 ${flameFlicker ? 'bg-orange-500' : 'bg-yellow-400'}`} 
+                    style={{ clipPath: 'polygon(50% 100%, 0% 0%, 100% 0%)' }} />
+                  <div className={`w-6 h-8 ${flameFlicker ? 'bg-yellow-400' : 'bg-orange-500'}`} 
+                    style={{ clipPath: 'polygon(50% 100%, 0% 0%, 100% 0%)' }} />
+                  <div className={`w-4 h-6 ${flameFlicker ? 'bg-orange-500' : 'bg-yellow-400'}`} 
+                    style={{ clipPath: 'polygon(50% 100%, 0% 0%, 100% 0%)' }} />
+                </div>
+              </motion.div>
+
+              {/* Mascot image */}
               <img
                 src="/mascot-rocket.png"
                 alt="GenLayer Mascot"
@@ -199,72 +243,57 @@ export function PressStart({ onComplete }: PressStartProps) {
         )}
 
         {phase === 'blastoff' && (
-          <>
-            {/* Trail path - diagonal line from center to top-left */}
-            <motion.div
-              className="absolute left-1/2 top-1/2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              style={{ translateX: '-50%', translateY: '-50%' }}
-            >
+          <motion.div
+            initial={{ y: 0 }}
+            animate={{ y: '-150vh' }}
+            transition={{
+              duration: 1.2,
+              ease: [0.2, 0, 0.8, 1],
+            }}
+            className="flex flex-col items-center"
+          >
+            {/* Rocket trail effect */}
+            <div className="absolute -bottom-20 left-1/2 -translate-x-1/2">
               <motion.div
-                className="origin-center"
-                initial={{ width: 0 }}
-                animate={{ width: 400 }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-                style={{
-                  height: '3px',
-                  background: 'linear-gradient(to left, #00fff7, #ffd700, transparent)',
-                  transform: 'rotate(-135deg)',
-                  transformOrigin: 'right center',
-                  boxShadow: '0 0 10px #00fff7, 0 0 20px #ffd700',
-                  borderRadius: '2px',
+                animate={{
+                  scaleY: [1, 2, 1],
+                  opacity: [0.8, 1, 0.8],
                 }}
-              />
-            </motion.div>
+                transition={{
+                  duration: 0.1,
+                  repeat: Infinity,
+                }}
+              >
+                <div className="flex gap-1">
+                  <div className="w-6 h-20 bg-orange-500" style={{ clipPath: 'polygon(50% 100%, 0% 0%, 100% 0%)' }} />
+                  <div className="w-8 h-28 bg-yellow-400" style={{ clipPath: 'polygon(50% 100%, 0% 0%, 100% 0%)' }} />
+                  <div className="w-6 h-20 bg-orange-500" style={{ clipPath: 'polygon(50% 100%, 0% 0%, 100% 0%)' }} />
+                </div>
+              </motion.div>
+            </div>
 
-            {/* Rocket flying to top-left corner */}
-            <motion.div
-              className="absolute"
-              initial={{ 
-                left: '50%', 
-                top: '50%', 
-                scale: 1, 
-                rotate: 0,
-                x: '-50%',
-                y: '-50%'
-              }}
-              animate={{ 
-                left: '0%', 
-                top: '0%', 
-                scale: 0.2,
-                rotate: -45,
-                x: '-20%',
-                y: '-20%'
+            {/* Mascot rocket */}
+            <img
+              src="/mascot-rocket.png"
+              alt="GenLayer Mascot"
+              className="w-48 h-48 md:w-64 md:h-64 object-contain pixelated"
+              style={{ imageRendering: 'pixelated' }}
+            />
+
+            {/* BLAST OFF text */}
+            <motion.p
+              className="font-pixel text-2xl md:text-4xl text-[#39ff14] neon-text-lime mt-4"
+              animate={{
+                scale: [1, 1.1, 1],
               }}
               transition={{
-                duration: 1,
-                ease: 'easeIn',
+                duration: 0.2,
+                repeat: Infinity,
               }}
-            >
-              <img
-                src="/mascot-rocket.png"
-                alt="GenLayer Mascot"
-                className="w-40 h-40 md:w-52 md:h-52 object-contain pixelated"
-                style={{ imageRendering: 'pixelated' }}
-              />
-            </motion.div>
-
-            {/* BLAST OFF text - stays in center briefly */}
-            <motion.p
-              className="font-pixel text-2xl md:text-4xl text-[#39ff14] neon-text-lime"
-              initial={{ opacity: 1 }}
-              animate={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
             >
               🚀 BLAST OFF!
             </motion.p>
-          </>
+          </motion.div>
         )}
 
         {/* Scanline effect */}
