@@ -11,6 +11,24 @@ interface RoleBadgeTooltipProps {
   t: (key: string) => string
 }
 
+// Role color mapping dari events-data.ts
+const roleColors: Record<string, string> = {
+  'Molecule': '#eab308',
+  'Neuron': '#f97316',
+  'Synapse': '#6366f1',
+  'Brain': '#a855f7',
+  'Singularity': '#39ff14',
+}
+
+// Role emoji mapping
+const roleEmojis: Record<string, string> = {
+  'Molecule': '🟡',
+  'Neuron': '🟠',
+  'Synapse': '🔵',
+  'Brain': '🟣',
+  'Singularity': '⭐',
+}
+
 export function RoleBadgeTooltip({ 
   roleName, 
   roleColor, 
@@ -107,13 +125,14 @@ export function RoleBadgeTooltip({
                 {qualifyingRoles.map((role) => (
                   <span 
                     key={role}
-                    className={`text-xs px-2 py-0.5 ${
-                      isGamingMode 
-                        ? 'bg-[#1a1a2e] text-white border border-[#2a2a4e]' 
-                        : 'bg-muted text-foreground'
-                    }`}
+                    className={`text-xs px-2 py-0.5 font-bold ${isGamingMode ? 'border' : 'rounded'}`}
+                    style={{ 
+                      color: roleColors[role] || '#ffffff',
+                      backgroundColor: (roleColors[role] || '#ffffff') + '20',
+                      borderColor: isGamingMode ? (roleColors[role] || '#2a2a4e') : undefined,
+                    }}
                   >
-                    {role}
+                    {roleEmojis[role] || ''} {role}
                   </span>
                 ))}
               </div>
