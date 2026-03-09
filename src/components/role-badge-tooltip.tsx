@@ -24,20 +24,22 @@ export function RoleBadgeTooltip({
   const { theme } = useTheme()
   const isGamingMode = theme === 'dark'
 
-  // Get qualifying roles based on role name
+  // Get qualifying roles - roles yang BISA ikut (sama atau lebih tinggi)
   const getQualifyingRoles = (name: string): string[] => {
-    const roleHierarchy: Record<string, string[]> = {
-      'Novice': [],
-      'Scout': ['Novice'],
-      'Explorer': ['Novice', 'Scout'],
-      'Pioneer': ['Novice', 'Scout', 'Explorer'],
-      'Trailblazer': ['Novice', 'Scout', 'Explorer', 'Pioneer'],
-      'Champion': ['Novice', 'Scout', 'Explorer', 'Pioneer', 'Trailblazer'],
-      'Guardian': ['Novice', 'Scout', 'Explorer', 'Pioneer', 'Trailblazer', 'Champion'],
-      'Legend': ['Novice', 'Scout', 'Explorer', 'Pioneer', 'Trailblazer', 'Champion', 'Guardian'],
-      'Titan': ['Novice', 'Scout', 'Explorer', 'Pioneer', 'Trailblazer', 'Champion', 'Guardian', 'Legend'],
-    }
-    return roleHierarchy[name] || []
+    // Remove "+" suffix jika ada
+    const baseName = name.replace(/\+$/, '')
+    
+    // Role hierarchy dari terendah ke tertinggi
+    const roleOrder = ['Molecule', 'Neuron', 'Synapse', 'Brain', 'Singularity']
+    
+    // Cari index role
+    const roleIndex = roleOrder.indexOf(baseName)
+    
+    // Jika role tidak ditemukan, return kosong
+    if (roleIndex === -1) return []
+    
+    // Return role dari index ini sampai tertinggi (role yang bisa ikut)
+    return roleOrder.slice(roleIndex)
   }
 
   const qualifyingRoles = getQualifyingRoles(roleName)
@@ -53,8 +55,7 @@ export function RoleBadgeTooltip({
       setTooltipPosition({
         left: `${rect.left}px`,
         top: shouldShowAbove ? '' : `${rect.bottom + 8}px`,
-        // Fixed calculation: subtract gap instead of add
-        bottom: shouldShowAbove ? `${viewportHeight - rect.top - 8}px` : ''
+        bottom: shouldShowAbove ? `calc(100vh - ${rect.top}px + 8px)` : ''
       })
     }
     setIsVisible(true)
@@ -78,7 +79,7 @@ export function RoleBadgeTooltip({
           className={`fixed z-[10000] min-w-[200px] max-w-[280px] p-3 ${
             isGamingMode 
               ? 'bg-[#0a0a0f] border-2 border-[#00fff7] shadow-[0_0_10px_#00fff7]' 
-              : 'bg-card border border-border shadow-lg'
+              : 'bg-card border border-border shadow-lg rounded-lg'
           }`}
           style={{
             left: tooltipPosition.left,
@@ -96,11 +97,11 @@ export function RoleBadgeTooltip({
             </span>
           </div>
           
-          {/* Qualifying Roles */}
+          {/* Can Participate */}
           {qualifyingRoles.length > 0 && (
             <div className="mb-2">
               <p className={`text-xs mb-1 ${isGamingMode ? 'text-[#8888aa]' : 'text-muted-foreground'}`}>
-                {t('qualifyingRoles')}:
+                {t('canParticipate')}:
               </p>
               <div className="flex flex-wrap gap-1">
                 {qualifyingRoles.map((role) => (
@@ -116,9 +117,6 @@ export function RoleBadgeTooltip({
                   </span>
                 ))}
               </div>
-              <p className={`text-xs mt-1 ${isGamingMode ? 'text-[#00fff7]' : 'text-primary'}`}>
-                {t('orHigher')}
-              </p>
             </div>
           )}
           
