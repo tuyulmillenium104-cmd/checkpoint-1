@@ -93,6 +93,7 @@ const translations: Record<Language, Record<string, string>> = {
     'clickRolesForInfo': 'Click role for more info',
     'monthlyHighlights': 'Monthly Highlights',
     'topContributors': 'Top Contributors',
+    'canParticipate': 'Can Participate',
   },
   id: {
     // Header
@@ -174,6 +175,7 @@ const translations: Record<Language, Record<string, string>> = {
     'clickRolesForInfo': 'Klik role untuk info lebih lanjut',
     'monthlyHighlights': 'Highlight Bulanan',
     'topContributors': 'Kontributor Teratas',
+    'canParticipate': 'Bisa Ikut',
   }
 }
 

@@ -893,7 +893,7 @@ function ToastNotification({ title, message, icon, onClick, onClose, duration = 
   )
 }
 
-function Notification({ message, onClose }: { message: string; onClose: () => void }) {
+function NotificationBanner({ message, onClose }: { message: string; onClose: () => void }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: -50, x: '-50%', scale: 0.9 }}
@@ -2559,7 +2559,7 @@ function AppContent() {
 
       <AnimatePresence>
         {notification && (
-          <Notification message={notification} onClose={() => setNotification(null)} />
+          <NotificationBanner message={notification} onClose={() => setNotification(null)} />
         )}
       </AnimatePresence>
 
