@@ -100,10 +100,11 @@ function useCountdown(targetTime: string, targetDay: string) {
   return countdown
 }
 
-// Current UTC time hook
+// Current time hook with timezone support
 function useCurrentTime() {
   const { language } = useLanguage()
   const [time, setTime] = useState('')
+  const [dateString, setDateString] = useState('')
   
   useEffect(() => {
     const updateTime = () => {
@@ -118,6 +119,13 @@ function useCurrentTime() {
           second: '2-digit',
           hour12: false 
         }))
+        // Date in WIB timezone with Indonesian format
+        setDateString(now.toLocaleDateString('id-ID', { 
+          timeZone: 'Asia/Jakarta',
+          day: 'numeric', 
+          month: 'short', 
+          year: 'numeric' 
+        }))
       } else {
         // English: 12-hour format for UTC
         setTime(now.toLocaleTimeString('en-US', { 
@@ -127,6 +135,13 @@ function useCurrentTime() {
           second: '2-digit',
           hour12: true 
         }))
+        // Date in UTC timezone with English format
+        setDateString(now.toLocaleDateString('en-US', { 
+          timeZone: 'UTC',
+          day: 'numeric', 
+          month: 'short', 
+          year: 'numeric' 
+        }))
       }
     }
     updateTime()
@@ -134,7 +149,7 @@ function useCurrentTime() {
     return () => clearInterval(interval)
   }, [language])
 
-  return time
+  return { time, dateString }
 }
 
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useEffect : () => {}
@@ -1972,7 +1987,7 @@ function AppContent() {
   const [backgroundTestCountdown, setBackgroundTestCountdown] = useState<number | null>(null)
   const [toastData, setToastData] = useState<{ title: string; message: string; icon?: string; eventId?: string } | null>(null)
 
-  const currentTime = useCurrentTime()
+  const { time: currentTime, dateString: currentDateString } = useCurrentTime()
   
   // Combine default events with custom events
   const allEvents = [...events, ...customEvents]
@@ -2236,15 +2251,6 @@ function AppContent() {
       }
     }
   }, [isClient])
-
-  // Get date string only on client to avoid hydration mismatch
-  const currentDateString = isClient 
-    ? new Date().toLocaleDateString('id-ID', { 
-        day: 'numeric', 
-        month: 'short', 
-        year: 'numeric' 
-      })
-    : ''
 
   // Save alarms to localStorage when changed
   useEffect(() => {
