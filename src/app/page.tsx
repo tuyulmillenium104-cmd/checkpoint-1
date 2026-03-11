@@ -100,57 +100,6 @@ function useCountdown(targetTime: string, targetDay: string) {
   return countdown
 }
 
-// Current time hook with timezone support
-function useCurrentTime() {
-  const { language } = useLanguage()
-  const [time, setTime] = useState('')
-  const [dateString, setDateString] = useState('')
-  
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date()
-      
-      if (language === 'id') {
-        // Indonesian: 24-hour format for WIB
-        setTime(now.toLocaleTimeString('en-GB', { 
-          timeZone: 'Asia/Jakarta', 
-          hour: '2-digit', 
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false 
-        }))
-        // Date in WIB timezone with Indonesian format
-        setDateString(now.toLocaleDateString('id-ID', { 
-          timeZone: 'Asia/Jakarta',
-          day: 'numeric', 
-          month: 'short', 
-          year: 'numeric' 
-        }))
-      } else {
-        // English: 12-hour format for UTC
-        setTime(now.toLocaleTimeString('en-US', { 
-          timeZone: 'UTC', 
-          hour: '2-digit', 
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: true 
-        }))
-        // Date in UTC timezone with English format
-        setDateString(now.toLocaleDateString('en-US', { 
-          timeZone: 'UTC',
-          day: 'numeric', 
-          month: 'short', 
-          year: 'numeric' 
-        }))
-      }
-    }
-    updateTime()
-    const interval = setInterval(updateTime, 1000)
-    return () => clearInterval(interval)
-  }, [language])
-
-  return { time, dateString }
-}
 
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useEffect : () => {}
 
@@ -1987,7 +1936,51 @@ function AppContent() {
   const [backgroundTestCountdown, setBackgroundTestCountdown] = useState<number | null>(null)
   const [toastData, setToastData] = useState<{ title: string; message: string; icon?: string; eventId?: string } | null>(null)
 
-  const { time: currentTime, dateString: currentDateString } = useCurrentTime()
+  // Current time states
+  const [currentTime, setCurrentTime] = useState('')
+  const [currentDateString, setCurrentDateString] = useState('')
+
+  // Update time every second
+  useEffect(() => {
+    const updateTimeState = () => {
+      const now = new Date()
+      
+      if (language === 'id') {
+        // Indonesian: 24-hour format for WIB
+        setCurrentTime(now.toLocaleTimeString('en-GB', { 
+          timeZone: 'Asia/Jakarta', 
+          hour: '2-digit', 
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false 
+        }))
+        setCurrentDateString(now.toLocaleDateString('id-ID', { 
+          timeZone: 'Asia/Jakarta',
+          day: 'numeric', 
+          month: 'short', 
+          year: 'numeric' 
+        }))
+      } else {
+        // English: 12-hour format for UTC
+        setCurrentTime(now.toLocaleTimeString('en-US', { 
+          timeZone: 'UTC', 
+          hour: '2-digit', 
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true 
+        }))
+        setCurrentDateString(now.toLocaleDateString('en-US', { 
+          timeZone: 'UTC',
+          day: 'numeric', 
+          month: 'short', 
+          year: 'numeric' 
+        }))
+      }
+    }
+    updateTimeState()
+    const interval = setInterval(updateTimeState, 1000)
+    return () => clearInterval(interval)
+  }, [language])
   
   // Combine default events with custom events
   const allEvents = [...events, ...customEvents]
