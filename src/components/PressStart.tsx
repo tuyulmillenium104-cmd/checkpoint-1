@@ -225,58 +225,29 @@ export function PressStart({ onComplete }: PressStartProps) {
               </motion.div>
             )}
 
-            {/* BLASTOFF PHASE - Flying mascot */}
+            {/* BLASTOFF PHASE - Flying mascot to top-left corner */}
             {phase === 'blastoff' && (
               <motion.div
-                initial={{ y: 0 }}
-                animate={{ y: '-150vh' }}
+                initial={{ x: 0, y: 0, scale: 1, opacity: 1 }}
+                animate={{
+                  x: '-45vw',
+                  y: '-45vh',
+                  scale: 0.3,
+                  opacity: 0,
+                }}
                 transition={{
-                  duration: 1.2,
-                  ease: [0.2, 0, 0.8, 1],
+                  duration: 1,
+                  ease: [0.25, 0.1, 0.25, 1],
                 }}
                 className="flex flex-col items-center"
               >
-                {/* Rocket trail effect */}
-                <div className="absolute -bottom-20 left-1/2 -translate-x-1/2">
-                  <motion.div
-                    animate={{
-                      scaleY: [1, 2, 1],
-                      opacity: [0.8, 1, 0.8],
-                    }}
-                    transition={{
-                      duration: 0.1,
-                      repeat: Infinity,
-                    }}
-                  >
-                    <div className="flex gap-1">
-                      <div className="w-6 h-20 bg-orange-500" style={{ clipPath: 'polygon(50% 100%, 0% 0%, 100% 0%)' }} />
-                      <div className="w-8 h-28 bg-yellow-400" style={{ clipPath: 'polygon(50% 100%, 0% 0%, 100% 0%)' }} />
-                      <div className="w-6 h-20 bg-orange-500" style={{ clipPath: 'polygon(50% 100%, 0% 0%, 100% 0%)' }} />
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Mascot rocket */}
+                {/* Mascot */}
                 <img
                   src="/mascot-rocket.png"
                   alt="GenLayer Mascot"
-                  className="w-48 h-48 md:w-64 md:h-64 object-contain pixelated"
+                  className="w-32 h-32 md:w-48 md:h-48 object-contain pixelated"
                   style={{ imageRendering: 'pixelated' }}
                 />
-
-                {/* BLAST OFF text */}
-                <motion.p
-                  className="font-pixel text-2xl md:text-4xl text-[#39ff14] neon-text-lime mt-4"
-                  animate={{
-                    scale: [1, 1.1, 1],
-                  }}
-                  transition={{
-                    duration: 0.2,
-                    repeat: Infinity,
-                  }}
-                >
-                  🚀 BLAST OFF!
-                </motion.p>
               </motion.div>
             )}
           </div>
