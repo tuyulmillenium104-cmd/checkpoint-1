@@ -959,6 +959,276 @@
   color: #ffffff;
 }
 
+/* ========== NEW IMPROVEMENTS ========== */
+
+/* Progress Ring Countdown */
+.countdown-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.countdown-ring svg {
+  transform: rotate(-90deg);
+}
+
+.countdown-ring .ring-bg {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+
+.countdown-ring .ring-progress {
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+
+/* 3D Card Hover Effect */
+.card-3d {
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+.card-3d:hover {
+  transform: translateY(-8px) rotateX(2deg);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(0, 255, 247, 0.2);
+}
+
+/* Live Badge Pulse Animation */
+.live-pulse {
+  position: relative;
+}
+
+.live-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: inherit;
+  animation: live-ping 1.5s ease-out infinite;
+  z-index: -1;
+}
+
+@keyframes live-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  75%, 100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Glow Effect on Hover */
+.glow-hover {
+  transition: all 0.3s ease;
+}
+
+.glow-hover:hover {
+  box-shadow: 
+    0 0 20px currentColor,
+    0 0 40px currentColor,
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* Number Counting Animation */
+@keyframes count-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.count-animate {
+  animation: count-up 0.5s ease-out forwards;
+}
+
+/* Floating Icon Animation */
+@keyframes icon-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(5deg);
+  }
+  75% {
+    transform: translateY(5px) rotate(-5deg);
+  }
+}
+
+.icon-float {
+  animation: icon-float 4s ease-in-out infinite;
+}
+
+/* Confetti Animation */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  top: 0;
+  z-index: 9999;
+  pointer-events: none;
+  animation: confetti-fall 3s ease-out forwards;
+}
+
+/* Gradient Text Animation */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-text-animated {
+  background: linear-gradient(90deg, #00fff7, #ff00ff, #39ff14, #ffd700, #00fff7);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* Sound Wave Animation */
+@keyframes sound-wave {
+  0%, 100% {
+    transform: scaleY(0.5);
+  }
+  50% {
+    transform: scaleY(1.5);
+  }
+}
+
+.sound-wave {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+}
+
+.sound-wave span {
+  width: 3px;
+  background: currentColor;
+  animation: sound-wave 0.5s ease-in-out infinite;
+}
+
+.sound-wave span:nth-child(1) { animation-delay: 0s; height: 30%; }
+.sound-wave span:nth-child(2) { animation-delay: 0.1s; height: 60%; }
+.sound-wave span:nth-child(3) { animation-delay: 0.2s; height: 100%; }
+.sound-wave span:nth-child(4) { animation-delay: 0.3s; height: 60%; }
+.sound-wave span:nth-child(5) { animation-delay: 0.4s; height: 30%; }
+
+/* Mode Switch Animation */
+.mode-switch-transition {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth theme transition for all elements */
+.theme-transition * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Event Type Gradients */
+.event-quiz {
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(75, 0, 130, 0.1));
+  border-color: #8a2be2;
+}
+
+.event-game {
+  background: linear-gradient(135deg, rgba(255, 99, 71, 0.1), rgba(255, 69, 0, 0.1));
+  border-color: #ff6347;
+}
+
+.event-ama {
+  background: linear-gradient(135deg, rgba(0, 255, 247, 0.1), rgba(0, 206, 209, 0.1));
+  border-color: #00fff7;
+}
+
+.event-contest {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+  border-color: #ffd700;
+}
+
+.event-xpspace {
+  background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(199, 21, 133, 0.1));
+  border-color: #ff00ff;
+}
+
+/* Backdrop Blur for Modals */
+.modal-blur {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Stagger Animation for Lists */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: stagger-in 0.5s ease forwards;
+}
+
+@keyframes stagger-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Success Checkmark Animation */
+@keyframes checkmark {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.checkmark-animate {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: checkmark 0.5s ease forwards;
+}
+
+/* Touch-friendly Button Sizes */
+@media (max-width: 640px) {
+  .touch-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Social Links Hover */
+.social-link {
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  transform: translateY(-3px) scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
 /* Lightbox effect for modals */
 .modal-overlay {
   background: 

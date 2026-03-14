@@ -10,8 +10,19 @@ import {
   Gamepad2, Sword, Shield, Flame,
   Settings, Trash2, Edit, Plus, Save, X,
   Download, Upload, RotateCcw, BarChart3,
-  AlertTriangle, Info, Lock, Unlock, Key
+  AlertTriangle, Info, Lock, Unlock, Key,
+  Twitter, MessageCircle, ExternalLink, Heart,
+  TrendingUp, Target, Sparkles
 } from 'lucide-react'
+import { 
+  ConfettiEffect, 
+  useSoundEffects, 
+  AnimatedNumber,
+  StatsCard,
+  SocialLink,
+  LiveBadge,
+  ProgressRing
+} from '@/components/ui-effects'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -1984,6 +1995,16 @@ function AppContent() {
 
   const [backgroundTestCountdown, setBackgroundTestCountdown] = useState<number | null>(null)
   const [toastData, setToastData] = useState<{ title: string; message: string; icon?: string; eventId?: string } | null>(null)
+  
+  // Confetti and Sound Effects
+  const [showConfetti, setShowConfetti] = useState(false)
+  const { playSound, soundEnabled, setSoundEnabled } = useSoundEffects()
+  
+  // Trigger confetti effect
+  const triggerConfetti = useCallback(() => {
+    setShowConfetti(true)
+    setTimeout(() => setShowConfetti(false), 3500)
+  }, [])
 
   const { time: currentTime, dateString: currentDateString } = useCurrentTime()
   
@@ -2364,6 +2385,7 @@ function AppContent() {
       if (newSet.has(eventId)) {
         newSet.delete(eventId)
         setNotification(t('notification.removed'))
+        playSound('remove')
         // Remove from LIVE if it was manually set
         if (manualLiveEvent?.id === eventId) {
           setManualLiveEvent(null)
@@ -2371,11 +2393,13 @@ function AppContent() {
       } else {
         newSet.add(eventId)
         setNotification(t('notification.set'))
+        playSound('success')
+        triggerConfetti()
       }
       return newSet
     })
     setTimeout(() => setNotification(null), 3000)
-  }, [t, manualLiveEvent])
+  }, [t, manualLiveEvent, playSound, triggerConfetti])
 
   // Start background test alarm (fires after X seconds, even if tab is hidden)
   const startBackgroundTest = useCallback((seconds: number) => {
@@ -2552,7 +2576,12 @@ function AppContent() {
   }, [])
 
   return (
-    <div className={`min-h-screen flex flex-col relative ${isGamingMode ? 'bg-[#0a0a0f] text-[#e0e0e0] retro-grid crt' : 'bg-background text-foreground'}`}>
+    <div className={`min-h-screen flex flex-col relative theme-transition ${isGamingMode ? 'bg-[#0a0a0f] text-[#e0e0e0] retro-grid crt' : 'bg-background text-foreground'}`}>
+      {/* Confetti Effect */}
+      <AnimatePresence>
+        {showConfetti && <ConfettiEffect />}
+      </AnimatePresence>
+      
       {/* Animated pixel decorations - only in gaming mode */}
       {isGamingMode && (
         <>
@@ -3476,13 +3505,117 @@ function AppContent() {
         {isGamingMode && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#00fff7] via-[#ff00ff] to-[#39ff14] opacity-50 animate-pulse" />
         )}
-        <div className="max-w-4xl mx-auto px-4 py-4 text-center">
-          <div className="flex items-center justify-center gap-2">
-            <span className={`${isGamingMode ? 'text-[#ffd700] sparkle' : 'text-primary'}`}>★</span>
-            <p className={`text-sm font-pixel-body ${isGamingMode ? 'text-[#8888aa]' : 'text-muted-foreground'}`}>
-              {t('footer')}
+        
+        {/* Stats Section */}
+        <div className="max-w-4xl mx-auto px-4 py-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            <StatsCard 
+              icon={<Calendar className="w-6 h-6" />}
+              value={allEvents.length}
+              label="Total Events"
+              color="#00fff7"
+              isGamingMode={isGamingMode}
+              delay={0}
+            />
+            <StatsCard 
+              icon={<Bell className="w-6 h-6" />}
+              value={alarmedEvents.size}
+              label="Alarms Set"
+              color="#39ff14"
+              isGamingMode={isGamingMode}
+              delay={0.1}
+            />
+            <StatsCard 
+              icon={<Trophy className="w-6 h-6" />}
+              value={allEvents.filter(e => e.xpRewards.length > 0).length}
+              label="XP Events"
+              color="#ffd700"
+              isGamingMode={isGamingMode}
+              delay={0.2}
+            />
+            <StatsCard 
+              icon={<Star className="w-6 h-6" />}
+              value={allEvents.filter(e => e.hasPOAP).length}
+              label="POAP Events"
+              color="#ff00ff"
+              isGamingMode={isGamingMode}
+              delay={0.3}
+            />
+          </div>
+          
+          {/* Divider */}
+          <div className={`h-px ${isGamingMode ? 'bg-gradient-to-r from-transparent via-[#2a2a4e] to-transparent' : 'bg-border'}`} />
+        </div>
+        
+        {/* Footer Content */}
+        <div className="max-w-4xl mx-auto px-4 py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* Logo & Title */}
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 flex items-center justify-center ${isGamingMode ? 'border-2 border-[#00fff7] bg-[#12121a]' : 'border border-border bg-card rounded-lg'}`}>
+                <img 
+                  src="/genlayer-logo.jpg" 
+                  alt="GenLayer" 
+                  className="w-8 h-8 object-contain"
+                />
+              </div>
+              <div>
+                <h4 className={`font-bold ${isGamingMode ? 'text-[#00fff7] font-pixel text-sm' : 'text-foreground'}`}>
+                  GENLAYER
+                </h4>
+                <p className={`text-xs ${isGamingMode ? 'text-[#ff00ff] font-pixel-body' : 'text-muted-foreground'}`}>
+                  Event Alarm System
+                </p>
+              </div>
+            </div>
+            
+            {/* Social Links */}
+            <div className="flex items-center gap-2">
+              <SocialLink 
+                href="https://discord.gg/genlayer"
+                icon={<MessageCircle className="w-4 h-4" />}
+                label="Discord"
+                isGamingMode={isGamingMode}
+              />
+              <SocialLink 
+                href="https://x.com/GenLayer"
+                icon={<Twitter className="w-4 h-4" />}
+                label="Twitter"
+                isGamingMode={isGamingMode}
+              />
+              <SocialLink 
+                href="https://genlayer.com"
+                icon={<ExternalLink className="w-4 h-4" />}
+                label="Website"
+                isGamingMode={isGamingMode}
+              />
+            </div>
+          </div>
+          
+          {/* Copyright */}
+          <div className="mt-6 text-center">
+            <div className="flex items-center justify-center gap-2">
+              <motion.span 
+                className={isGamingMode ? 'text-[#ffd700] sparkle' : 'text-primary'}
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                ★
+              </motion.span>
+              <p className={`text-sm ${isGamingMode ? 'text-[#8888aa] font-pixel-body' : 'text-muted-foreground'}`}>
+                {t('footer')}
+              </p>
+              <motion.span 
+                className={isGamingMode ? 'text-[#ffd700] sparkle' : 'text-primary'}
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+              >
+                ★
+              </motion.span>
+            </div>
+            <p className={`text-xs mt-2 ${isGamingMode ? 'text-[#666688] font-pixel-body' : 'text-muted-foreground'}`}>
+              Made with <Heart className="w-3 h-3 inline text-red-500 animate-pulse" /> by GenLayer Community
             </p>
-            <span className={`${isGamingMode ? 'text-[#ffd700] sparkle' : 'text-primary'}`}>★</span>
           </div>
         </div>
       </footer>
