@@ -120,6 +120,34 @@ export const events: Event[] = [
     link: DISCORD_LINKS.ama,
     duration: 90, // X Space - 1 hour 30 minutes
   },
+  {
+    id: 'mon-quiz-korean',
+    name: 'Quiz Korean',
+    icon: '/icons/quiz-korea.png',
+    day: 'MONDAY',
+    time: '2:45 PM',
+    timeUTC: '14:45',
+    description: 'Korean language quiz event for the Korean community. Test your knowledge about GenLayer and compete for XP rewards.',
+    xpRewards: generateQuizRewards(),
+    roleReq: 'Molecule+',
+    roleColor: '#eab308',
+    link: DISCORD_LINKS.regionalQuiz,
+    duration: 10, // Quiz - 10 minutes
+  },
+  {
+    id: 'mon-quiz-ukrainian',
+    name: 'Quiz Ukrainian',
+    icon: '/icons/quiz-ukraine.png',
+    day: 'MONDAY',
+    time: '6:00 PM',
+    timeUTC: '18:00',
+    description: 'Ukrainian language quiz event for the Ukrainian community. Test your knowledge about GenLayer and compete for XP rewards.',
+    xpRewards: generateQuizRewards(),
+    roleReq: 'Molecule+',
+    roleColor: '#eab308',
+    link: DISCORD_LINKS.regionalQuiz,
+    duration: 10, // Quiz - 10 minutes
+  },
 
   // TUESDAY
   {
@@ -201,6 +229,20 @@ export const events: Event[] = [
     roleReq: 'Molecule+',
     roleColor: '#eab308',
     link: DISCORD_LINKS.others,
+    duration: 10, // Quiz - 10 minutes
+  },
+  {
+    id: 'tue-quiz-nigerian',
+    name: 'Quiz Nigerian',
+    icon: '/icons/quiz-nigeria.png',
+    day: 'TUESDAY',
+    time: '12:30 PM',
+    timeUTC: '12:30',
+    description: 'Nigerian community quiz event. Test your knowledge about GenLayer in this regional quiz and compete for XP rewards.',
+    xpRewards: generateQuizRewards(),
+    roleReq: 'Molecule+',
+    roleColor: '#eab308',
+    link: DISCORD_LINKS.quizNigeria,
     duration: 10, // Quiz - 10 minutes
   },
 
@@ -304,6 +346,20 @@ export const events: Event[] = [
     link: DISCORD_LINKS.smashkarts,
     duration: 10, // Game - 10 minutes
   },
+  {
+    id: 'thu-quiz-russian',
+    name: 'Quiz Russian',
+    icon: '/icons/quiz-russia.png',
+    day: 'THURSDAY',
+    time: '7:00 PM',
+    timeUTC: '19:00',
+    description: 'Russian language quiz event for the Russian community. Test your knowledge about GenLayer and compete for XP rewards.',
+    xpRewards: generateQuizRewards(),
+    roleReq: 'Molecule+',
+    roleColor: '#eab308',
+    link: DISCORD_LINKS.regionalQuiz,
+    duration: 10, // Quiz - 10 minutes
+  },
 
   // FRIDAY
   {
@@ -325,6 +381,20 @@ export const events: Event[] = [
     link: DISCORD_LINKS.genfrenQuiz,
     duration: 10, // Quiz - 10 minutes
   },
+  {
+    id: 'fri-quiz-turkish',
+    name: 'Quiz Turkish',
+    icon: '/icons/quiz-turkey.png',
+    day: 'FRIDAY',
+    time: '7:00 PM',
+    timeUTC: '19:00',
+    description: 'Turkish language quiz event for the Turkish community. Test your knowledge about GenLayer and compete for XP rewards.',
+    xpRewards: generateQuizRewards(),
+    roleReq: 'Molecule+',
+    roleColor: '#eab308',
+    link: DISCORD_LINKS.regionalQuiz,
+    duration: 10, // Quiz - 10 minutes
+  },
 
   // SATURDAY
   {
@@ -341,6 +411,62 @@ export const events: Event[] = [
     roleColor: '#eab308',
     link: DISCORD_LINKS.xSpace,
     duration: 90, // X Space - 1 hour 30 minutes
+  },
+  {
+    id: 'sat-quiz-chinese',
+    name: 'Quiz Chinese',
+    icon: '/icons/quiz-china.png',
+    day: 'SATURDAY',
+    time: '1:00 PM',
+    timeUTC: '13:00',
+    description: 'Chinese language quiz event for the Chinese community. Test your knowledge about GenLayer and compete for XP rewards.',
+    xpRewards: generateQuizRewards(),
+    roleReq: 'Molecule+',
+    roleColor: '#eab308',
+    link: DISCORD_LINKS.regionalQuiz,
+    duration: 10, // Quiz - 10 minutes
+  },
+  {
+    id: 'sat-quiz-indonesian',
+    name: 'Quiz Indonesian',
+    icon: '/icons/quiz-indonesia.png',
+    day: 'SATURDAY',
+    time: '2:00 PM',
+    timeUTC: '14:00',
+    description: 'Indonesian language quiz event for the Indonesian community. Test your knowledge about GenLayer and compete for XP rewards.',
+    xpRewards: generateQuizRewards(),
+    roleReq: 'Molecule+',
+    roleColor: '#eab308',
+    link: DISCORD_LINKS.quizIndonesia,
+    duration: 10, // Quiz - 10 minutes
+  },
+  {
+    id: 'sat-quiz-vietnamese',
+    name: 'Quiz Vietnamese',
+    icon: '/icons/quiz-vietnam.png',
+    day: 'SATURDAY',
+    time: '2:00 PM',
+    timeUTC: '14:00',
+    description: 'Vietnamese language quiz event for the Vietnamese community. Test your knowledge about GenLayer and compete for XP rewards.',
+    xpRewards: generateQuizRewards(),
+    roleReq: 'Molecule+',
+    roleColor: '#eab308',
+    link: DISCORD_LINKS.regionalQuiz,
+    duration: 10, // Quiz - 10 minutes
+  },
+  {
+    id: 'sat-quiz-indian',
+    name: 'Quiz Indian',
+    icon: '/icons/quiz-india.png',
+    day: 'SATURDAY',
+    time: '4:00 PM',
+    timeUTC: '16:00',
+    description: 'Indian language quiz event for the Indian community. Test your knowledge about GenLayer and compete for XP rewards.',
+    xpRewards: generateQuizRewards(),
+    roleReq: 'Molecule+',
+    roleColor: '#eab308',
+    link: DISCORD_LINKS.regionalQuiz,
+    duration: 10, // Quiz - 10 minutes
   },
   {
     id: 'sat-kirka',
