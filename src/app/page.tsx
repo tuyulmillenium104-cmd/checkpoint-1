@@ -3484,11 +3484,6 @@ function AppContent() {
             </p>
             <span className={`${isGamingMode ? 'text-[#ffd700] sparkle' : 'text-primary'}`}>★</span>
           </div>
-          {isGamingMode && (
-            <p className="text-base text-[#39ff14] mt-2 font-pixel neon-text-lime animate-pulse">
-              PRESS START TO CONTINUE
-            </p>
-          )}
         </div>
       </footer>
 
