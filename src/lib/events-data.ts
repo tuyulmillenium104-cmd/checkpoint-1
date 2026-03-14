@@ -127,9 +127,9 @@ export const events: Event[] = [
     name: 'Neurocreative Content Contest',
     icon: '/icons/meme-contest.png',
     day: 'TUESDAY',
-    time: 'Pengumuman',
-    timeUTC: '00:00',
-    description: 'Weekly content creation contest. Submit your GenLayer content as X posts in #neurocreatives channel. Winners announced every Tuesday.',
+    time: '8:00 PM',
+    timeUTC: '13:00',
+    description: 'Weekly content creation contest. Submit your GenLayer content as X posts in #neurocreatives channel. Winners announced every Tuesday (8 PM - 11 PM WIB).',
     xpRewards: [
       { position: '🥇', xp: 5000 },
       { position: '🥈', xp: 4500 },
@@ -141,6 +141,7 @@ export const events: Event[] = [
     roleReq: 'Molecule+',
     roleColor: '#eab308',
     link: DISCORD_LINKS.neurocreative,
+    duration: 180, // Live announcement: 8 PM - 11 PM WIB (3 hours)
   },
   {
     id: 'tue-rumble-gartic',
@@ -209,9 +210,9 @@ export const events: Event[] = [
     name: 'Meme Contest',
     icon: '/icons/meme-contest.png',
     day: 'WEDNESDAY',
-    time: 'Pengumuman',
-    timeUTC: '00:00',
-    description: 'Weekly meme contest! Create and submit your best GenLayer memes. Winners announced every Wednesday. Top memes earn XP rewards.',
+    time: '8:00 PM',
+    timeUTC: '13:00',
+    description: 'Weekly meme contest! Create and submit your best GenLayer memes. Winners announced every Wednesday (8 PM - 11 PM WIB). Top memes earn XP rewards.',
     xpRewards: [
       { position: '🥇', xp: 2500 },
       { position: '🥈', xp: 2000 },
@@ -223,6 +224,7 @@ export const events: Event[] = [
     roleReq: 'Molecule+',
     roleColor: '#eab308',
     link: DISCORD_LINKS.memeContest,
+    duration: 180, // Live announcement: 8 PM - 11 PM WIB (3 hours)
   },
   {
     id: 'wed-ai-blockchain',
