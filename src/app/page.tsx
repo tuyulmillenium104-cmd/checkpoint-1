@@ -2742,55 +2742,62 @@ function AppContent() {
                 <Users className={`w-4 h-4 ${isGamingMode ? 'text-[#ffd700]' : 'text-primary'}`} />
                 <span className={`hidden sm:inline text-xs ${isGamingMode ? 'font-bold text-[#ffd700]' : ''}`}>{t('roles')}</span>
               </Button>
-
-              {/* Demo Mode Button */}
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className={`gap-1.5 text-xs ${isGamingMode ? 'border-3 font-bold ' + (demoMode ? 'border-[#ff0040] bg-[#ff0040]/20 text-[#ff0040]' : 'border-[#8888aa] bg-[#12121a] text-[#8888aa]') : demoMode ? 'border-destructive bg-destructive/10 text-destructive' : ''}`}
-                onClick={() => setDemoMode(!demoMode)}
-              >
-                <Zap className="w-4 h-4" />
-                <span className="hidden sm:inline">DEMO</span>
-              </Button>
-
-              {/* Admin Mode Button */}
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className={`gap-1.5 text-xs ${isGamingMode 
-                  ? adminMode 
-                    ? 'border-3 border-[#39ff14] bg-[#39ff14]/20 text-[#39ff14] font-bold animate-pulse' 
-                    : 'border-3 border-[#8888aa] bg-[#12121a] text-[#8888aa] hover:border-[#39ff14] hover:text-[#39ff14]' 
-                  : adminMode 
-                    ? 'border border-[#39ff14] bg-[#39ff14]/10 text-[#39ff14]' 
-                    : ''}`}
-                onClick={() => setAdminMode(!adminMode)}
-              >
-                <Settings className="w-4 h-4" />
-                <span className="hidden sm:inline">{adminMode ? 'ADMIN ON' : 'ADMIN'}</span>
-              </Button>
-              
-              {/* Admin Panel Button - Only show when admin mode is on */}
-              {adminMode && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className={`gap-1.5 text-xs ${isGamingMode 
-                    ? 'border-3 border-[#ffd700] bg-[#ffd700]/20 text-[#ffd700] font-bold' 
-                    : 'border border-[#ffd700] bg-[#ffd700]/10 text-[#ffd700]'}`}
-                  onClick={() => setPasswordModalOpen(true)}
-                >
-                  <Gamepad2 className="w-4 h-4" />
-                  <span className="hidden sm:inline">MANAGE</span>
-                </Button>
-              )}
               
               <ThemeToggle />
             </div>
           </div>
         </div>
       </header>
+
+      {/* Admin & Demo Control Bar - Below Header */}
+      <div className={`${isGamingMode ? 'bg-[#0a0a0f] border-b-2 border-[#2a2a4e]' : 'bg-muted/30 border-b border-border'}`}>
+        <div className="max-w-4xl mx-auto px-4 py-2">
+          <div className="flex items-center justify-end gap-2 flex-wrap">
+            {/* Demo Mode Button */}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className={`gap-1.5 text-xs ${isGamingMode ? 'border-3 font-bold ' + (demoMode ? 'border-[#ff0040] bg-[#ff0040]/20 text-[#ff0040]' : 'border-[#8888aa] bg-[#12121a] text-[#8888aa]') : demoMode ? 'border-destructive bg-destructive/10 text-destructive' : ''}`}
+              onClick={() => setDemoMode(!demoMode)}
+            >
+              <Zap className="w-4 h-4" />
+              <span className="hidden sm:inline">DEMO</span>
+            </Button>
+
+            {/* Admin Mode Button */}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className={`gap-1.5 text-xs ${isGamingMode 
+                ? adminMode 
+                  ? 'border-3 border-[#39ff14] bg-[#39ff14]/20 text-[#39ff14] font-bold animate-pulse' 
+                  : 'border-3 border-[#8888aa] bg-[#12121a] text-[#8888aa] hover:border-[#39ff14] hover:text-[#39ff14]' 
+                : adminMode 
+                  ? 'border border-[#39ff14] bg-[#39ff14]/10 text-[#39ff14]' 
+                  : ''}`}
+              onClick={() => setAdminMode(!adminMode)}
+            >
+              <Settings className="w-4 h-4" />
+              <span className="hidden sm:inline">{adminMode ? 'ADMIN ON' : 'ADMIN'}</span>
+            </Button>
+            
+            {/* Admin Panel Button - Only show when admin mode is on */}
+            {adminMode && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className={`gap-1.5 text-xs ${isGamingMode 
+                  ? 'border-3 border-[#ffd700] bg-[#ffd700]/20 text-[#ffd700] font-bold' 
+                  : 'border border-[#ffd700] bg-[#ffd700]/10 text-[#ffd700]'}`}
+                onClick={() => setPasswordModalOpen(true)}
+              >
+                <Gamepad2 className="w-4 h-4" />
+                <span className="hidden sm:inline">MANAGE</span>
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* Demo Mode Banner */}
       {demoMode && (
