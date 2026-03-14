@@ -2637,7 +2637,8 @@ function AppContent() {
           </>
         )}
         
-        <div className="max-w-4xl mx-auto px-4 py-4">
+        <div className="max-w-4xl mx-auto px-4 py-3">
+          {/* Top Row: Logo, Title, Social Links */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-3">
               <div className={`w-12 h-12 flex items-center justify-center relative overflow-hidden ${isGamingMode ? 'border-3 border-[#00fff7] bg-[#12121a] pixel-shadow' : 'border border-border bg-card rounded-lg'}`}>
@@ -2663,9 +2664,50 @@ function AppContent() {
               </div>
             </div>
 
+            {/* Social Links - Moved to top */}
+            <div className="flex items-center gap-1.5">
+              <motion.a
+                href="https://discord.gg/NVuX2YyxGw"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-all ${isGamingMode ? 'border-2 border-[#5865F2] text-[#5865F2] bg-[#5865F2]/10 hover:bg-[#5865F2]/20' : 'border border-border bg-card text-foreground rounded-md hover:bg-muted'}`}
+                whileHover={{ scale: 1.05, y: -1 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span className="hidden sm:inline">Discord</span>
+              </motion.a>
+              <motion.a
+                href="https://x.com/GenLayer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-all ${isGamingMode ? 'border-2 border-[#1DA1F2] text-[#1DA1F2] bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/20' : 'border border-border bg-card text-foreground rounded-md hover:bg-muted'}`}
+                whileHover={{ scale: 1.05, y: -1 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Twitter className="w-4 h-4" />
+                <span className="hidden sm:inline">X</span>
+              </motion.a>
+              <motion.a
+                href="https://genlayer.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-all ${isGamingMode ? 'border-2 border-[#00fff7] text-[#00fff7] bg-[#00fff7]/10 hover:bg-[#00fff7]/20' : 'border border-border bg-card text-foreground rounded-md hover:bg-muted'}`}
+                whileHover={{ scale: 1.05, y: -1 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span className="hidden sm:inline">Web</span>
+              </motion.a>
+            </div>
+          </div>
+
+          {/* Second Row: Clock, Controls, Theme */}
+          <div className="flex items-center justify-between gap-2 mt-3 flex-wrap">
+            {/* Left side - Clock */}
             <div className="flex items-center gap-2">
               {/* Clock Display */}
-              <div className={`hidden sm:flex flex-col items-center px-3 py-1 ${isGamingMode ? 'border-3 border-[#2a2a4e] bg-[#12121a] pixel-glow' : 'border border-border bg-card rounded-md'}`}>
+              <div className={`flex flex-col items-center px-3 py-1 ${isGamingMode ? 'border-3 border-[#2a2a4e] bg-[#12121a] pixel-glow' : 'border border-border bg-card rounded-md'}`}>
                 <div className="flex items-center gap-2">
                   <Clock className={`w-4 h-4 ${isGamingMode ? 'text-[#00fff7] pulse-neon' : 'text-primary'}`} />
                   <span className={`text-base font-pixel-body ${isGamingMode ? 'text-[#00fff7] font-bold' : 'text-foreground font-mono'}`}>{currentTime}</span>
@@ -2675,7 +2717,10 @@ function AppContent() {
                   {currentDateString || 'Loading...'}
                 </span>
               </div>
+            </div>
 
+            {/* Right side - Controls */}
+            <div className="flex items-center gap-2 flex-wrap">
               {isClient && alarmEnabled && (
                 <button
                   onClick={() => setAlarmListOpen(true)}
@@ -2685,17 +2730,6 @@ function AppContent() {
                   <span>{alarmedEvents.size}</span>
                 </button>
               )}
-
-              {/* Demo Mode Button */}
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className={`gap-1.5 text-xs ${isGamingMode ? 'border-3 font-bold ' + (demoMode ? 'border-[#ff0040] bg-[#ff0040]/20 text-[#ff0040]' : 'border-[#8888aa] bg-[#12121a] text-[#8888aa]') : demoMode ? 'border-destructive bg-destructive/10 text-destructive' : ''}`}
-                onClick={() => setDemoMode(!demoMode)}
-              >
-                <Zap className="w-4 h-4" />
-                <span className="hidden sm:inline">DEMO</span>
-              </Button>
 
               <LanguageToggle isGamingMode={isGamingMode} />
 
@@ -2707,6 +2741,17 @@ function AppContent() {
               >
                 <Users className={`w-4 h-4 ${isGamingMode ? 'text-[#ffd700]' : 'text-primary'}`} />
                 <span className={`hidden sm:inline text-xs ${isGamingMode ? 'font-bold text-[#ffd700]' : ''}`}>{t('roles')}</span>
+              </Button>
+
+              {/* Demo Mode Button */}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className={`gap-1.5 text-xs ${isGamingMode ? 'border-3 font-bold ' + (demoMode ? 'border-[#ff0040] bg-[#ff0040]/20 text-[#ff0040]' : 'border-[#8888aa] bg-[#12121a] text-[#8888aa]') : demoMode ? 'border-destructive bg-destructive/10 text-destructive' : ''}`}
+                onClick={() => setDemoMode(!demoMode)}
+              >
+                <Zap className="w-4 h-4" />
+                <span className="hidden sm:inline">DEMO</span>
               </Button>
 
               {/* Admin Mode Button */}
@@ -2743,18 +2788,6 @@ function AppContent() {
               
               <ThemeToggle />
             </div>
-          </div>
-
-          {/* Mobile Clock */}
-          <div className={`flex sm:hidden flex-col items-start mt-2 px-2 py-1 w-fit ${isGamingMode ? 'border-3 border-[#2a2a4e] bg-[#12121a] pixel-glow' : 'border border-border bg-card rounded-md'}`}>
-            <div className="flex items-center gap-2">
-              <Clock className={`w-4 h-4 ${isGamingMode ? 'text-[#00fff7] pulse-neon' : 'text-primary'}`} />
-              <span className={`text-base font-pixel-body ${isGamingMode ? 'text-[#00fff7] font-bold' : 'text-foreground font-mono'}`}>{currentTime}</span>
-              <span className={`text-sm ${isGamingMode ? 'text-[#ff00ff] font-pixel-body font-bold' : 'text-muted-foreground'}`}>{language === 'id' ? 'WIB' : 'UTC'}</span>
-            </div>
-            <span className={`text-sm ${isGamingMode ? 'text-[#8888aa] font-pixel-body' : 'text-muted-foreground'}`}>
-              {currentDateString || 'Loading...'}
-            </span>
           </div>
         </div>
       </header>
@@ -3549,51 +3582,20 @@ function AppContent() {
         
         {/* Footer Content */}
         <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            {/* Logo & Title */}
-            <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 flex items-center justify-center ${isGamingMode ? 'border-2 border-[#00fff7] bg-[#12121a]' : 'border border-border bg-card rounded-lg'}`}>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <div className={`w-8 h-8 flex items-center justify-center ${isGamingMode ? 'border-2 border-[#00fff7] bg-[#12121a]' : 'border border-border bg-card rounded-lg'}`}>
                 <img 
                   src="/genlayer-logo.jpg" 
                   alt="GenLayer" 
-                  className="w-8 h-8 object-contain"
+                  className="w-6 h-6 object-contain"
                 />
               </div>
-              <div>
-                <h4 className={`font-bold ${isGamingMode ? 'text-[#00fff7] font-pixel text-sm' : 'text-foreground'}`}>
-                  GENLAYER
-                </h4>
-                <p className={`text-xs ${isGamingMode ? 'text-[#ff00ff] font-pixel-body' : 'text-muted-foreground'}`}>
-                  Event Alarm System
-                </p>
-              </div>
+              <span className={`text-sm font-bold ${isGamingMode ? 'text-[#00fff7] font-pixel' : 'text-foreground'}`}>
+                GENLAYER
+              </span>
             </div>
             
-            {/* Social Links */}
-            <div className="flex items-center gap-2">
-              <SocialLink 
-                href="https://discord.gg/genlayer"
-                icon={<MessageCircle className="w-4 h-4" />}
-                label="Discord"
-                isGamingMode={isGamingMode}
-              />
-              <SocialLink 
-                href="https://x.com/GenLayer"
-                icon={<Twitter className="w-4 h-4" />}
-                label="Twitter"
-                isGamingMode={isGamingMode}
-              />
-              <SocialLink 
-                href="https://genlayer.com"
-                icon={<ExternalLink className="w-4 h-4" />}
-                label="Website"
-                isGamingMode={isGamingMode}
-              />
-            </div>
-          </div>
-          
-          {/* Copyright */}
-          <div className="mt-6 text-center">
             <div className="flex items-center justify-center gap-2">
               <motion.span 
                 className={isGamingMode ? 'text-[#ffd700] sparkle' : 'text-primary'}
@@ -3613,7 +3615,7 @@ function AppContent() {
                 ★
               </motion.span>
             </div>
-            <p className={`text-xs mt-2 ${isGamingMode ? 'text-[#666688] font-pixel-body' : 'text-muted-foreground'}`}>
+            <p className={`text-xs mt-3 ${isGamingMode ? 'text-[#666688] font-pixel-body' : 'text-muted-foreground'}`}>
               Made with <Heart className="w-3 h-3 inline text-red-500 animate-pulse" /> by GenLayer Community
             </p>
           </div>
