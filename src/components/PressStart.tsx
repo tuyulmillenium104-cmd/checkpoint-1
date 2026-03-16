@@ -76,11 +76,28 @@ export function PressStart({ onComplete }: PressStartProps) {
   const handleClick = useCallback(() => {
     if (phase === 'idle') {
       setPhase('countdown')
+      // Play coin insert sound using Web Audio API
       if (typeof window !== 'undefined') {
         try {
-          const audio = new Audio('/sounds/coin-insert.mp3')
-          audio.volume = 0.5
-          audio.play().catch(() => {})
+          const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
+          
+          // Play a coin-insert like sound (two tones)
+          const playTone = (freq: number, startTime: number, duration: number) => {
+            const oscillator = audioContext.createOscillator()
+            const gainNode = audioContext.createGain()
+            oscillator.connect(gainNode)
+            gainNode.connect(audioContext.destination)
+            oscillator.frequency.value = freq
+            oscillator.type = 'sine'
+            gainNode.gain.setValueAtTime(0.15, startTime)
+            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration)
+            oscillator.start(startTime)
+            oscillator.stop(startTime + duration)
+          }
+          
+          const now = audioContext.currentTime
+          playTone(1200, now, 0.08)
+          playTone(1600, now + 0.08, 0.12)
         } catch {
           // Audio not supported
         }
