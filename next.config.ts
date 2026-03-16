@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
+  allowedDevOrigins: [
+    "preview-chat-d408cfbc-96d2-441c-a069-46268228b866.space.z.ai",
+    ".space.z.ai",
+  ],
 };
 
 export default nextConfig;
