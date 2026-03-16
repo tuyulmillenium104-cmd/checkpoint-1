@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { 
@@ -40,6 +40,10 @@ import {
 import { LanguageProvider, useLanguage, useDayName } from '@/lib/language-context'
 import { PressStart } from '@/components/PressStart'
 import { RoleBadgeTooltip } from '@/components/role-badge-tooltip'
+import { SearchFilter } from '@/components/events/SearchFilter'
+import { EmptyState } from '@/components/events/EmptyState'
+import { OnboardingTour, useOnboarding } from '@/components/events/OnboardingTour'
+import { CalendarExport } from '@/components/events/CalendarExport'
 
 // Get current day in UTC
 function getCurrentUTCDay(): string {
@@ -598,6 +602,12 @@ function EventDetailModal({
               )}
             </Button>
           </div>
+
+          {/* Calendar Export */}
+          <div className="flex items-center gap-2 pt-2">
+            <span className="text-xs text-[#8888aa]">Add to calendar:</span>
+            <CalendarExport event={event} isGamingMode={true} />
+          </div>
         </div>
       </DialogContent>
     </Dialog>
@@ -1034,7 +1044,9 @@ function AdminPanelModal({
   onDeleteFunctionalRole,
   onExportData,
   onImportData,
-  onResetToDefault
+  onResetToDefault,
+  announcementText,
+  onUpdateAnnouncement
 }: { 
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -1053,10 +1065,12 @@ function AdminPanelModal({
   onExportData: () => void
   onImportData: (data: { events: Event[], roles: Role[], functionalRoles: FunctionalRole[] }) => void
   onResetToDefault: () => void
+  announcementText: string
+  onUpdateAnnouncement: (text: string) => void
 }) {
   const { t } = useLanguage()
   const getDayName = useDayName()
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'events' | 'roles' | 'functional'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'events' | 'roles' | 'functional' | 'settings'>('dashboard')
   const [isAddingNew, setIsAddingNew] = useState(false)
   const [editingEvent, setEditingEvent] = useState<Event | null>(null)
   const [editingRole, setEditingRole] = useState<Role | null>(null)
@@ -1350,6 +1364,14 @@ function AdminPanelModal({
           >
             <Shield className="w-4 h-4" />
             Functional
+          </Button>
+          <Button
+            size="sm"
+            className={`gap-2 font-bold text-xs ${activeTab === 'settings' ? 'bg-[#ff6b35] text-white' : 'bg-transparent text-[#8888aa] hover:text-[#ff6b35]'}`}
+            onClick={() => { setActiveTab('settings'); resetForm(); }}
+          >
+            <Bell className="w-4 h-4" />
+            Settings
           </Button>
         </div>
 
@@ -1944,6 +1966,55 @@ function AdminPanelModal({
               </div>
             </>
           )}
+
+          {/* ========== SETTINGS TAB ========== */}
+          {activeTab === 'settings' && (
+            <div className="space-y-4">
+              {/* Announcement Settings */}
+              <div className="p-4 border-3 border-[#ff6b35] bg-[#12121a]">
+                <h3 className="text-sm font-bold text-[#ff6b35] mb-3 flex items-center gap-2">
+                  <Bell className="w-4 h-4" />
+                  Running Text / Announcement
+                </h3>
+                <p className="text-xs text-[#8888aa] mb-3">
+                  Text ini akan tampil di header sebagai running text (marquee)
+                </p>
+                <textarea
+                  value={announcementText}
+                  onChange={(e) => onUpdateAnnouncement(e.target.value)}
+                  className="w-full bg-[#0a0a0f] border-2 border-[#2a2a4e] text-white p-3 text-sm focus:border-[#ff6b35] outline-none resize-none"
+                  rows={3}
+                  placeholder="Enter announcement text..."
+                />
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-xs text-[#8888aa]">{announcementText.length} characters</span>
+                  <Button
+                    size="sm"
+                    className="bg-[#ff6b35] text-white font-bold text-xs"
+                    onClick={() => {
+                      onUpdateAnnouncement(announcementText)
+                    }}
+                  >
+                    <Save className="w-3 h-3 mr-1" />
+                    Save
+                  </Button>
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div className="p-4 border-3 border-[#2a2a4e] bg-[#0a0a0f]">
+                <h3 className="text-sm font-bold text-[#8888aa] mb-2">Preview:</h3>
+                <div className="overflow-hidden border-2 border-[#2a2a4e] bg-[#12121a] p-2">
+                  <div className="animate-marquee whitespace-nowrap text-[#ffd700] text-sm">
+                    <span>{announcementText}</span>
+                    <span className="mx-8">•</span>
+                    <span>{announcementText}</span>
+                    <span className="mx-8">•</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         
         {/* Confirmation Dialog */}
@@ -1988,7 +2059,15 @@ function AppContent() {
   const [customRoles, setCustomRoles] = useState<Role[]>([...roles])
   const rolesLoadedRef = useRef(false)
   const [customFunctionalRoles, setCustomFunctionalRoles] = useState<FunctionalRole[]>([...functionalRoles])
+  
+  // Announcement/Running text
+  const [announcementText, setAnnouncementText] = useState('🎉 Welcome to GenLayer Event Alarm System! Set your alarms and never miss an event.')
+  const announcementLoadedRef = useRef(false)
   const functionalRolesLoadedRef = useRef(false)
+
+  // Search and Filter
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'quiz' | 'game' | 'ama' | 'contest' | 'special'>('all')
 
   // Determine if gaming mode (dark theme) is active - only after client mount to avoid hydration mismatch
   const isGamingMode = isClient && theme === 'dark'
@@ -2048,11 +2127,53 @@ function AppContent() {
   
   const nextEvent = getNextEventCustom()
   const countdown = useCountdown(nextEvent?.timeUTC || '00:00', nextEvent?.day || 'MONDAY')
-  const filteredEvents = allEvents.filter(e => e.day === selectedDay)
+  
+  // Filter events by day, search query, and category
+  const filteredEvents = useMemo(() => {
+    let result = allEvents.filter(e => e.day === selectedDay)
+    
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      result = result.filter(event => 
+        event.name.toLowerCase().includes(query) ||
+        event.description?.toLowerCase().includes(query) ||
+        event.roleReq.toLowerCase().includes(query)
+      )
+    }
+    
+    // Apply category filter
+    if (selectedCategory !== 'all') {
+      result = result.filter(event => {
+        switch (selectedCategory) {
+          case 'quiz':
+            return event.name.toLowerCase().includes('quiz') || event.xpRewards?.length > 0
+          case 'game':
+            return ['smash karts', 'kirka', 'poker', 'chess', 'gartic', 'rumble', 'geoguessr'].some(g => 
+              event.name.toLowerCase().includes(g)
+            )
+          case 'ama':
+            return event.name.toLowerCase().includes('ama') || event.hasInsight
+          case 'contest':
+            return event.name.toLowerCase().includes('contest') || event.name.toLowerCase().includes('meme')
+          case 'special':
+            return event.isSpecial
+          default:
+            return true
+        }
+      })
+    }
+    
+    return result
+  }, [allEvents, selectedDay, searchQuery, selectedCategory])
+  
   const todayEvents = allEvents.filter(e => e.day === ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][new Date().getUTCDay()])
 
   const alarmEnabled = alarmedEvents.size > 0
   const alarmsLoadedRef = useRef(false)
+
+  // Onboarding tour
+  const { showOnboarding, closeOnboarding, resetOnboarding } = useOnboarding()
 
   // Set client mount state
   useIsomorphicLayoutEffect(() => {
@@ -2160,6 +2281,26 @@ function AppContent() {
       localStorage.setItem('genlayer-custom-functional-roles', JSON.stringify(customFunctionalRoles))
     }
   }, [customFunctionalRoles])
+
+  // Load announcement text from localStorage
+  useEffect(() => {
+    if (isClient && !announcementLoadedRef.current) {
+      announcementLoadedRef.current = true
+      const saved = localStorage.getItem('genlayer-announcement-text')
+      if (saved) {
+        setTimeout(() => {
+          setAnnouncementText(saved)
+        }, 0)
+      }
+    }
+  }, [isClient])
+
+  // Save announcement text to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && announcementLoadedRef.current) {
+      localStorage.setItem('genlayer-announcement-text', announcementText)
+    }
+  }, [announcementText])
 
   // Role handlers
   const handleAddRole = useCallback((role: Role) => {
@@ -2628,6 +2769,13 @@ function AppContent() {
         )}
       </AnimatePresence>
 
+      {/* Onboarding Tour */}
+      <OnboardingTour 
+        isOpen={showOnboarding}
+        onClose={closeOnboarding}
+        isGamingMode={isGamingMode}
+      />
+
       {/* Header */}
       <header className={`sticky top-0 z-40 backdrop-blur-sm relative ${isGamingMode ? 'border-b-4 border-[#00fff7] bg-[#0a0a0f]/95' : 'border-b border-border bg-background/95'}`}>
         {isGamingMode && (
@@ -2637,153 +2785,164 @@ function AppContent() {
           </>
         )}
         
-        <div className="max-w-4xl mx-auto px-4 py-2">
-          {/* Single Row Layout */}
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            {/* Left: Logo + Title + Clock */}
+        <div className="max-w-5xl mx-auto px-4 py-3">
+          {/* Main Header Row */}
+          <div className="flex items-center justify-between gap-4">
+            {/* Left: Branding */}
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 flex items-center justify-center relative overflow-hidden ${isGamingMode ? 'border-2 border-[#00fff7] bg-[#12121a] pixel-shadow' : 'border border-border bg-card rounded-lg'}`}>
+              <div className={`w-12 h-12 flex items-center justify-center relative ${isGamingMode ? 'border-3 border-[#00fff7] bg-[#12121a] pixel-shadow' : 'rounded-lg bg-muted border border-border'}`}>
                 <img 
                   src="/genlayer-logo.jpg" 
                   alt="GenLayer" 
-                  className="w-8 h-8 object-contain"
+                  className="w-10 h-10 object-contain"
                 />
                 {isGamingMode && (
-                  <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#39ff14] animate-pulse" />
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#39ff14] animate-pulse" />
                 )}
               </div>
-              <div className="flex flex-col">
-                <h1 
-                  className={`text-base font-bold leading-tight ${isGamingMode ? 'text-[#00fff7] font-pixel neon-text-cyan' : 'text-foreground'}`} 
-                  data-text={isGamingMode ? t('app.title') : undefined}
-                >
+              <div>
+                <h1 className={`text-xl font-bold ${isGamingMode ? 'text-[#00fff7] neon-text-cyan font-pixel' : 'text-foreground'}`}>
                   {t('app.title')}
                 </h1>
                 {isGamingMode && (
-                  <p className="text-[10px] text-[#ff00ff] font-pixel-body animate-pulse">EVENT ALARM SYSTEM</p>
+                  <p className="text-xs text-[#ff00ff] font-pixel-body animate-pulse">EVENT ALARM SYSTEM</p>
                 )}
-              </div>
-              {/* Clock */}
-              <div className={`flex items-center gap-1.5 px-2 py-1 ${isGamingMode ? 'border-2 border-[#2a2a4e] bg-[#12121a]' : 'border border-border bg-card rounded-md'}`}>
-                <Clock className={`w-3.5 h-3.5 ${isGamingMode ? 'text-[#00fff7] pulse-neon' : 'text-primary'}`} />
-                <span className={`text-sm font-bold ${isGamingMode ? 'text-[#00fff7]' : 'text-foreground font-mono'}`}>{currentTime}</span>
-                <span className={`text-xs ${isGamingMode ? 'text-[#ff00ff]' : 'text-muted-foreground'}`}>{language === 'id' ? 'WIB' : 'UTC'}</span>
               </div>
             </div>
 
-            {/* Right: Controls */}
-            <div className="flex items-center gap-1.5">
+            {/* Center: Clock */}
+            <div className={`hidden md:flex items-center gap-2 px-4 py-2 ${isGamingMode ? 'border-3 border-[#2a2a4e] bg-[#12121a] pixel-glow' : 'bg-muted rounded-lg'}`}>
+              <Clock className={`w-4 h-4 ${isGamingMode ? 'text-[#00fff7] pulse-neon' : 'text-primary'}`} />
+              <span className={`text-lg font-bold ${isGamingMode ? 'text-[#00fff7]' : 'text-foreground font-mono'}`}>{currentTime}</span>
+              <span className={`text-sm font-semibold ${isGamingMode ? 'text-[#ff00ff]' : 'text-muted-foreground'}`}>{language === 'id' ? 'WIB' : 'UTC'}</span>
+            </div>
+
+            {/* Right: Actions */}
+            <div className="flex items-center gap-2">
+              {/* Alarm Badge */}
               {isClient && alarmEnabled && (
                 <button
                   onClick={() => setAlarmListOpen(true)}
-                  className={`flex items-center gap-0.5 text-xs px-2 py-1 transition-colors cursor-pointer ${isGamingMode ? 'border-2 border-[#39ff14] text-[#39ff14] bg-[#39ff14]/10 font-bold hover:bg-[#39ff14]/30' : 'border border-primary text-primary bg-primary/10 rounded-md hover:bg-primary/20'}`}
+                  className={`flex items-center gap-1 px-3 py-2 text-sm font-bold transition-colors ${isGamingMode ? 'border-3 border-[#39ff14] text-[#39ff14] bg-[#39ff14]/10 hover:bg-[#39ff14]/30' : 'border border-primary text-primary bg-primary/10 rounded-md hover:bg-primary/20'}`}
                 >
-                  <BellRing className="w-3 h-3 animate-pulse" />
-                  <span>{alarmedEvents.size}</span>
+                  <BellRing className="w-4 h-4 animate-pulse" />
+                  {alarmedEvents.size}
                 </button>
               )}
+              
+              {/* Language */}
               <LanguageToggle isGamingMode={isGamingMode} />
+              
+              {/* Theme */}
               <ThemeToggle />
-              {/* Admin & Demo */}
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className={`gap-1 text-xs ${isGamingMode ? 'border-2 font-bold ' + (demoMode ? 'border-[#ff0040] bg-[#ff0040]/20 text-[#ff0040]' : 'border-[#8888aa] bg-[#12121a] text-[#8888aa]') : demoMode ? 'border-destructive bg-destructive/10 text-destructive' : ''}`}
-                onClick={() => setDemoMode(!demoMode)}
-              >
-                <Zap className="w-3 h-3" />
-                <span className="hidden sm:inline">DEMO</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className={`gap-1 text-xs ${isGamingMode 
-                  ? adminMode 
-                    ? 'border-2 border-[#39ff14] bg-[#39ff14]/20 text-[#39ff14] font-bold' 
-                    : 'border-2 border-[#8888aa] bg-[#12121a] text-[#8888aa] hover:border-[#39ff14] hover:text-[#39ff14]' 
-                  : adminMode 
-                    ? 'border border-[#39ff14] bg-[#39ff14]/10 text-[#39ff14]' 
-                    : ''}`}
-                onClick={() => setAdminMode(!adminMode)}
-              >
-                <Settings className="w-3 h-3" />
-                <span className="hidden sm:inline">{adminMode ? 'ON' : 'ADMIN'}</span>
-              </Button>
-              {adminMode && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className={`gap-1 text-xs ${isGamingMode 
-                    ? 'border-2 border-[#ffd700] bg-[#ffd700]/20 text-[#ffd700] font-bold' 
-                    : 'border border-[#ffd700] bg-[#ffd700]/10 text-[#ffd700]'}`}
-                  onClick={() => setPasswordModalOpen(true)}
-                >
-                  <Gamepad2 className="w-3 h-3" />
-                  <span className="hidden sm:inline">MANAGE</span>
-                </Button>
-              )}
             </div>
           </div>
 
-          {/* Second Row: Social Links - Centered */}
-          <div className="flex items-center justify-center gap-1.5 mt-2 flex-wrap">
-            <motion.a
-              href="https://bloom-rover-b76.notion.site/How-You-Can-Contribute-To-GenLayer-1d75ecdf5d8b809e95c0dcc03585d04c"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-all ${isGamingMode ? 'border-2 border-[#ffd700] text-[#ffd700] bg-[#ffd700]/10 hover:bg-[#ffd700]/20' : 'border border-border bg-card text-foreground rounded-md hover:bg-muted'}`}
-              whileHover={{ scale: 1.05, y: -1 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Users className="w-3.5 h-3.5" />
-              <span>Role</span>
-            </motion.a>
-            <span className={`${isGamingMode ? 'text-[#2a2a4e]' : 'text-muted-foreground'}`}>•</span>
-            <motion.a
-              href="https://discord.gg/NVuX2YyxGw"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-all ${isGamingMode ? 'border-2 border-[#5865F2] text-[#5865F2] bg-[#5865F2]/10 hover:bg-[#5865F2]/20' : 'border border-border bg-card text-foreground rounded-md hover:bg-muted'}`}
-              whileHover={{ scale: 1.05, y: -1 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <MessageCircle className="w-3.5 h-3.5" />
-              <span>Discord</span>
-            </motion.a>
-            <motion.a
-              href="https://x.com/GenLayer"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-all ${isGamingMode ? 'border-2 border-[#1DA1F2] text-[#1DA1F2] bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/20' : 'border border-border bg-card text-foreground rounded-md hover:bg-muted'}`}
-              whileHover={{ scale: 1.05, y: -1 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Twitter className="w-3.5 h-3.5" />
-              <span>X</span>
-            </motion.a>
-            <motion.a
-              href="https://genlayer.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-all ${isGamingMode ? 'border-2 border-[#00fff7] text-[#00fff7] bg-[#00fff7]/10 hover:bg-[#00fff7]/20' : 'border border-border bg-card text-foreground rounded-md hover:bg-muted'}`}
-              whileHover={{ scale: 1.05, y: -1 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span>Web</span>
-            </motion.a>
-            <motion.a
-              href="https://portal.genlayer.foundation/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-all ${isGamingMode ? 'border-2 border-[#39ff14] text-[#39ff14] bg-[#39ff14]/10 hover:bg-[#39ff14]/20' : 'border border-border bg-card text-foreground rounded-md hover:bg-muted'}`}
-              whileHover={{ scale: 1.05, y: -1 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span>Portal</span>
-            </motion.a>
+          {/* Divider */}
+          <div className={`my-2 h-px ${isGamingMode ? 'bg-gradient-to-r from-transparent via-[#00fff7] to-transparent' : 'bg-border'}`} />
+
+          {/* Second Row: Running Text (left) + Social Links (right) */}
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            {/* Left: Running Text / Announcement */}
+            <div className="flex-1 min-w-0 overflow-hidden">
+              <div className={`animate-marquee whitespace-nowrap ${isGamingMode ? 'text-[#ffd700]' : 'text-muted-foreground'}`}>
+                <span className="text-sm font-medium">{announcementText}</span>
+                <span className="mx-8">•</span>
+                <span className="text-sm font-medium">{announcementText}</span>
+                <span className="mx-8">•</span>
+              </div>
+            </div>
+
+            {/* Right: Social Links */}
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <motion.a
+                href="https://bloom-rover-b76.notion.site/How-You-Can-Contribute-To-GenLayer-1d75ecdf5d8b809e95c0dcc03585d04c"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-all ${isGamingMode ? 'text-[#ffd700] hover:bg-[#ffd700]/10' : 'text-foreground hover:bg-muted rounded'}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Users className="w-3.5 h-3.5" />
+                Role
+              </motion.a>
+              <span className={`${isGamingMode ? 'text-[#2a2a4e]' : 'text-border'}`}>|</span>
+              <motion.a
+                href="https://discord.gg/NVuX2YyxGw"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-all ${isGamingMode ? 'text-[#5865F2] hover:bg-[#5865F2]/10' : 'text-foreground hover:bg-muted rounded'}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                Discord
+              </motion.a>
+              <motion.a
+                href="https://x.com/GenLayer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-all ${isGamingMode ? 'text-[#1DA1F2] hover:bg-[#1DA1F2]/10' : 'text-foreground hover:bg-muted rounded'}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Twitter className="w-3.5 h-3.5" />
+                X
+              </motion.a>
+              <motion.a
+                href="https://genlayer.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-all ${isGamingMode ? 'text-[#00fff7] hover:bg-[#00fff7]/10' : 'text-foreground hover:bg-muted rounded'}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Web
+              </motion.a>
+              <motion.a
+                href="https://portal.genlayer.foundation/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-all ${isGamingMode ? 'text-[#39ff14] hover:bg-[#39ff14]/10' : 'text-foreground hover:bg-muted rounded'}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Globe className="w-3.5 h-3.5" />
+                Portal
+              </motion.a>
+            </div>
           </div>
+        </div>
+
+        {/* Admin Controls - Small corner position (will be hidden for non-admin users) */}
+        <div className="absolute top-2 right-2 flex items-center gap-1">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={`h-7 text-[10px] px-2 ${demoMode ? 'text-red-400' : 'text-muted-foreground opacity-50 hover:opacity-100'}`}
+            onClick={() => setDemoMode(!demoMode)}
+          >
+            {demoMode ? '🔴 DEMO' : 'DEMO'}
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={`h-7 text-[10px] px-2 ${adminMode ? 'text-green-400' : 'text-muted-foreground opacity-50 hover:opacity-100'}`}
+            onClick={() => setAdminMode(!adminMode)}
+          >
+            {adminMode ? '🟢 ADMIN' : 'ADMIN'}
+          </Button>
+          {adminMode && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 text-[10px] px-2 text-amber-400"
+              onClick={() => setPasswordModalOpen(true)}
+            >
+              MANAGE
+            </Button>
+          )}
         </div>
       </header>
 
@@ -3366,6 +3525,17 @@ function AppContent() {
             <h3 className={`text-sm font-semibold ${isGamingMode ? 'text-xl text-[#39ff14] font-pixel neon-text-lime' : 'text-foreground'}`}>{t('eventSchedule')}</h3>
           </div>
           
+          {/* Search and Filter */}
+          <SearchFilter
+            isGamingMode={isGamingMode}
+            onSearch={setSearchQuery}
+            onCategoryChange={setSelectedCategory}
+            searchQuery={searchQuery}
+            selectedCategory={selectedCategory}
+            eventCount={allEvents.filter(e => e.day === selectedDay).length}
+            filteredCount={filteredEvents.length}
+          />
+          
           <Tabs value={selectedDay} onValueChange={setSelectedDay} className="w-full">
             <TabsList className={`w-full justify-start flex-wrap h-auto gap-0.5 p-1 mb-4 ${isGamingMode ? 'bg-[#0a0a0f] border-3 border-[#2a2a4e]' : 'bg-muted'}`}>
               {DAYS.map((day) => {
@@ -3468,6 +3638,14 @@ function AppContent() {
                 </div>
               </motion.div>
             ))}
+            {filteredEvents.length === 0 && (
+              <EmptyState 
+                type={searchQuery ? 'no-search' : selectedCategory !== 'all' ? 'no-filter' : 'no-events'}
+                isGamingMode={isGamingMode}
+                searchQuery={searchQuery}
+                onClearSearch={() => setSearchQuery('')}
+              />
+            )}
           </div>
         </div>
 
@@ -3666,6 +3844,8 @@ function AppContent() {
         onExportData={handleExportData}
         onImportData={handleImportData}
         onResetToDefault={handleResetToDefault}
+        announcementText={announcementText}
+        onUpdateAnnouncement={setAnnouncementText}
       />
     </div>
   )
