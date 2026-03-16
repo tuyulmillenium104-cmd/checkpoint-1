@@ -132,8 +132,23 @@ export function ProgressRing({
 }
 
 // ========== SOUND EFFECTS HOOK ==========
+const SOUND_ENABLED_KEY = 'genlayer-sound-enabled'
+
 export function useSoundEffects() {
-  const [soundEnabled, setSoundEnabled] = useState(true)
+  // Use lazy initialization to avoid SSR issues and lint warnings
+  const [soundEnabled, setSoundEnabledState] = useState(() => {
+    if (typeof window === 'undefined') return true
+    const saved = localStorage.getItem(SOUND_ENABLED_KEY)
+    return saved === null ? true : saved === 'true'
+  })
+
+  // Save sound preference to localStorage
+  const setSoundEnabled = useCallback((enabled: boolean) => {
+    setSoundEnabledState(enabled)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(SOUND_ENABLED_KEY, String(enabled))
+    }
+  }, [])
   
   const playSound = useCallback((type: 'click' | 'success' | 'remove' | 'alarm' | 'countdown') => {
     if (!soundEnabled || typeof window === 'undefined') return

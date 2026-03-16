@@ -3856,9 +3856,19 @@ export default function Home() {
   const [mounted, setMounted] = useState(false)
   const { theme } = useTheme()
   
-  // Use useIsomorphicLayoutEffect to avoid hydration mismatch
+  // Load press start state from localStorage on mount
   useIsomorphicLayoutEffect(() => {
     setMounted(true)
+    const saved = localStorage.getItem('genlayer-press-start-complete')
+    if (saved === 'true') {
+      setPressStartComplete(true)
+    }
+  }, [])
+  
+  // Save press start state to localStorage
+  const handlePressStartComplete = useCallback(() => {
+    setPressStartComplete(true)
+    localStorage.setItem('genlayer-press-start-complete', 'true')
   }, [])
   
   const isGamingMode = mounted && theme === 'dark'
@@ -3867,7 +3877,7 @@ export default function Home() {
   if (isGamingMode && !pressStartComplete) {
     return (
       <LanguageProvider>
-        <PressStart onComplete={() => setPressStartComplete(true)} />
+        <PressStart onComplete={handlePressStartComplete} />
       </LanguageProvider>
     )
   }

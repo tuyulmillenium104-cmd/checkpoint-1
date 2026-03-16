@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react'
 
 type Language = 'id' | 'en'
 
@@ -11,6 +11,8 @@ interface LanguageContextType {
   formatTime: (timeUTC: string) => string
   formatTimeWithLabel: (timeUTC: string) => string
 }
+
+const LANGUAGE_STORAGE_KEY = 'genlayer-language'
 
 const translations: Record<Language, Record<string, string>> = {
   en: {
@@ -182,7 +184,20 @@ const translations: Record<Language, Record<string, string>> = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('id') // Default Indonesian
+  // Initialize from localStorage or default to 'id' (lazy initialization to avoid SSR issues)
+  const [language, setLanguageState] = useState<Language>(() => {
+    if (typeof window === 'undefined') return 'id'
+    const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY)
+    return (saved === 'id' || saved === 'en') ? saved : 'id'
+  })
+
+  // Save language to localStorage when it changes
+  const setLanguage = useCallback((lang: Language) => {
+    setLanguageState(lang)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(LANGUAGE_STORAGE_KEY, lang)
+    }
+  }, [])
 
   const t = useCallback((key: string): string => {
     return translations[language][key] || key
