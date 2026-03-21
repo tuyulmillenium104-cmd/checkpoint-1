@@ -1,0 +1,41 @@
+{
+  "name": "GenLayer Event Alarm",
+  "short_name": "GenLayer Alarm",
+  "description": "Never miss a GenLayer event! Set alarms and get notified.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#00fff7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/genlayer-logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/genlayer-logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "View Events",
+      "short_name": "Events",
+      "description": "View all scheduled events",
+      "url": "/",
+      "icons": [{ "src": "/genlayer-logo.jpg", "sizes": "192x192" }]
+    },
+    {
+      "name": "My Alarms",
+      "short_name": "Alarms",
+      "description": "View your set alarms",
+      "url": "/",
+      "icons": [{ "src": "/genlayer-logo.jpg", "sizes": "192x192" }]
+    }
+  ]
+}
