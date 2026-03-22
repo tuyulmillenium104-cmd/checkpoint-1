@@ -3169,53 +3169,53 @@ function AppContent() {
       <header className={`sticky top-0 z-40 backdrop-blur-sm relative ${isGamingMode ? 'border-b-4 border-[#00fff7] bg-[#0a0a0f]/95' : 'border-b border-border bg-background/95'}`}>
         {isGamingMode && (
           <>
-            <PixelDecoration className="top-2 left-4" />
-            <PixelDecoration className="top-2 right-4" />
+            <PixelDecoration className="top-2 left-4 hidden sm:block" />
+            <PixelDecoration className="top-2 right-4 hidden sm:block" />
           </>
         )}
         
-        <div className="max-w-5xl mx-auto px-4 py-3">
+        <div className="max-w-5xl mx-auto px-3 sm:px-4 py-2 sm:py-3">
           {/* Main Header Row */}
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
             {/* Left: Branding */}
-            <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 flex items-center justify-center relative ${isGamingMode ? 'border-3 border-[#00fff7] bg-[#12121a] pixel-shadow' : 'rounded-lg bg-muted border border-border'}`}>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center relative ${isGamingMode ? 'border-3 border-[#00fff7] bg-[#12121a] pixel-shadow' : 'rounded-lg bg-muted border border-border'}`}>
                 <img 
                   src="/genlayer-logo.jpg" 
                   alt="GenLayer" 
-                  className="w-10 h-10 object-contain"
+                  className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
                 />
                 {isGamingMode && (
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#39ff14] animate-pulse" />
+                  <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-[#39ff14] animate-pulse" />
                 )}
               </div>
               <div>
-                <h1 className={`text-xl font-bold ${isGamingMode ? 'text-[#00fff7] neon-text-cyan font-pixel' : 'text-foreground'}`}>
+                <h1 className={`text-base sm:text-xl font-bold ${isGamingMode ? 'text-[#00fff7] neon-text-cyan font-pixel' : 'text-foreground'}`}>
                   {t('app.title')}
                 </h1>
                 {isGamingMode && (
-                  <p className="text-xs text-[#ff00ff] font-pixel-body animate-pulse">EVENT ALARM SYSTEM</p>
+                  <p className="text-[10px] sm:text-xs text-[#ff00ff] font-pixel-body animate-pulse hidden sm:block">EVENT ALARM SYSTEM</p>
                 )}
               </div>
             </div>
 
-            {/* Center: Clock */}
-            <div className={`hidden md:flex items-center gap-2 px-4 py-2 ${isGamingMode ? 'border-3 border-[#2a2a4e] bg-[#12121a] pixel-glow' : 'bg-muted rounded-lg'}`}>
-              <Clock className={`w-4 h-4 ${isGamingMode ? 'text-[#00fff7] pulse-neon' : 'text-primary'}`} />
-              <span className={`text-lg font-bold ${isGamingMode ? 'text-[#00fff7]' : 'text-foreground font-mono'}`}>{currentTime}</span>
-              <span className={`text-sm font-semibold ${isGamingMode ? 'text-[#ff00ff]' : 'text-muted-foreground'}`}>{language === 'id' ? 'WIB' : 'UTC'}</span>
+            {/* Center: Clock - Show on both mobile and desktop */}
+            <div className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 ${isGamingMode ? 'border-2 sm:border-3 border-[#2a2a4e] bg-[#12121a] pixel-glow' : 'bg-muted rounded-lg'}`}>
+              <Clock className={`w-3 h-3 sm:w-4 sm:h-4 ${isGamingMode ? 'text-[#00fff7] pulse-neon' : 'text-primary'}`} />
+              <span className={`text-sm sm:text-lg font-bold ${isGamingMode ? 'text-[#00fff7]' : 'text-foreground font-mono'}`}>{currentTime}</span>
+              <span className={`text-[10px] sm:text-sm font-semibold hidden sm:inline ${isGamingMode ? 'text-[#ff00ff]' : 'text-muted-foreground'}`}>{language === 'id' ? 'WIB' : 'UTC'}</span>
             </div>
 
             {/* Right: Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               {/* Alarm Badge */}
               {isClient && alarmEnabled && (
                 <button
                   onClick={() => setAlarmListOpen(true)}
-                  className={`flex items-center gap-1 px-3 py-2 text-sm font-bold transition-colors ${isGamingMode ? 'border-3 border-[#39ff14] text-[#39ff14] bg-[#39ff14]/10 hover:bg-[#39ff14]/30' : 'border border-primary text-primary bg-primary/10 rounded-md hover:bg-primary/20'}`}
+                  className={`flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold transition-colors ${isGamingMode ? 'border-2 sm:border-3 border-[#39ff14] text-[#39ff14] bg-[#39ff14]/10 hover:bg-[#39ff14]/30' : 'border border-primary text-primary bg-primary/10 rounded-md hover:bg-primary/20'}`}
                 >
-                  <BellRing className="w-4 h-4 animate-pulse" />
-                  {alarmedEvents.size}
+                  <BellRing className="w-3 h-3 sm:w-4 sm:h-4 animate-pulse" />
+                  <span className="hidden sm:inline">{alarmedEvents.size}</span>
                 </button>
               )}
               
@@ -3228,10 +3228,10 @@ function AppContent() {
           </div>
 
           {/* Divider */}
-          <div className={`my-2 h-px ${isGamingMode ? 'bg-gradient-to-r from-transparent via-[#00fff7] to-transparent' : 'bg-border'}`} />
+          <div className={`my-1.5 sm:my-2 h-px ${isGamingMode ? 'bg-gradient-to-r from-transparent via-[#00fff7] to-transparent' : 'bg-border'}`} />
 
           {/* Second Row: Running Text (left) + Social Links (right) */}
-          <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
             {/* Left: Running Text / Announcement */}
             <div className="flex-1 min-w-0 overflow-hidden">
               <div className={`animate-marquee whitespace-nowrap ${isGamingMode ? 'text-[#ffd700]' : 'text-muted-foreground'}`}>
@@ -3239,26 +3239,26 @@ function AppContent() {
                   <>
                     {announcementTexts.map((text, idx) => (
                       <span key={idx}>
-                        <span className="text-sm font-medium">{text}</span>
-                        {idx < announcementTexts.length - 1 && <span className="mx-8">•</span>}
+                        <span className="text-[10px] sm:text-sm font-medium">{text}</span>
+                        {idx < announcementTexts.length - 1 && <span className="mx-4 sm:mx-8">•</span>}
                       </span>
                     ))}
-                    <span className="mx-8">•</span>
+                    <span className="mx-4 sm:mx-8">•</span>
                     {announcementTexts.map((text, idx) => (
                       <span key={`dup-${idx}`}>
-                        <span className="text-sm font-medium">{text}</span>
-                        {idx < announcementTexts.length - 1 && <span className="mx-8">•</span>}
+                        <span className="text-[10px] sm:text-sm font-medium">{text}</span>
+                        {idx < announcementTexts.length - 1 && <span className="mx-4 sm:mx-8">•</span>}
                       </span>
                     ))}
                   </>
                 ) : (
-                  <span className="text-sm font-medium opacity-50">Welcome to GenLayer Event Alarm System</span>
+                  <span className="text-[10px] sm:text-sm font-medium opacity-50">Welcome to GenLayer Event Alarm System</span>
                 )}
               </div>
             </div>
 
-            {/* Right: Social Links */}
-            <div className="flex items-center gap-1.5 flex-shrink-0">
+            {/* Right: Social Links - Hidden on very small screens */}
+            <div className="hidden sm:flex items-center gap-1.5 flex-shrink-0">
               <motion.a
                 href="https://bloom-rover-b76.notion.site/How-You-Can-Contribute-To-GenLayer-1d75ecdf5d8b809e95c0dcc03585d04c"
                 target="_blank"
