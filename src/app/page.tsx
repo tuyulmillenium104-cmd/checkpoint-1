@@ -985,8 +985,8 @@ function PasswordModal({
   
   // Password is stored in localStorage for customization
   const correctPassword = typeof window !== 'undefined' 
-    ? localStorage.getItem('genlayer-admin-password') || 'admin123'
-    : 'admin123'
+    ? localStorage.getItem('genlayer-admin-password') || 'genlayer2024!'
+    : 'genlayer2024!'
 
   const handleSubmit = () => {
     if (password === correctPassword) {
@@ -2402,14 +2402,9 @@ function AppContent() {
     const urlParams = new URLSearchParams(window.location.search)
     const adminKey = urlParams.get('admin')
     
-    // Multiple valid secrets for flexibility
-    const validSecrets = [
-      process.env.NEXT_PUBLIC_ADMIN_SECRET, // From .env
-      'gl2024secret', // Primary fallback
-      'genlayer2024secret', // Legacy fallback
-    ].filter(Boolean) // Remove undefined values
-    
-    const isValidSecret = adminKey && validSecrets.includes(adminKey)
+    // Valid secrets - from environment variable
+    const envSecret = process.env.NEXT_PUBLIC_ADMIN_SECRET
+    const isValidSecret = adminKey && envSecret && adminKey === envSecret
 
     // Check localStorage for previously granted access
     const wasGranted = localStorage.getItem('genlayer-admin-granted')
