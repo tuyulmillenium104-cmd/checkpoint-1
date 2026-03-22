@@ -967,7 +967,7 @@ function NotificationBanner({ message, onClose }: { message: string; onClose: ()
   )
 }
 
-// Password Protection Modal
+// Password Protection Modal - Uses secure server-side authentication
 function PasswordModal({ 
   open, 
   onOpenChange, 
@@ -982,19 +982,51 @@ function PasswordModal({
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  
-  // Password is stored in localStorage for customization
-  const correctPassword = typeof window !== 'undefined' 
-    ? localStorage.getItem('genlayer-admin-password') || 'genlayer2024!'
-    : 'genlayer2024!'
+  const [isLoading, setIsLoading] = useState(false)
+  const [remainingAttempts, setRemainingAttempts] = useState<number | null>(null)
+  const [blockedFor, setBlockedFor] = useState<number | null>(null)
 
-  const handleSubmit = () => {
-    if (password === correctPassword) {
-      setError('')
-      setPassword('')
-      onSuccess()
-    } else {
-      setError('Incorrect password!')
+  const handleSubmit = async () => {
+    if (!password.trim()) {
+      setError('Password is required')
+      return
+    }
+
+    setIsLoading(true)
+    setError('')
+    setBlockedFor(null)
+
+    try {
+      const response = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setPassword('')
+        setError('')
+        setRemainingAttempts(null)
+        onSuccess()
+      } else {
+        // Handle error
+        if (response.status === 429) {
+          // Rate limited
+          setBlockedFor(data.blockedFor || 900)
+          setError(data.message || 'Too many failed attempts. Please try again later.')
+        } else {
+          setRemainingAttempts(data.remainingAttempts ?? null)
+          setError(data.message || data.error || 'Invalid password')
+        }
+      }
+    } catch (err) {
+      setError('Connection error. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -1011,32 +1043,78 @@ function PasswordModal({
         </DialogHeader>
         <div className="space-y-4 py-4">
           <p className={`text-sm ${isGamingMode ? 'text-[#8888aa]' : 'text-gray-600'}`}>Enter admin password to access the admin panel.</p>
+          
+          {blockedFor && (
+            <div className={`p-3 border-2 ${isGamingMode ? 'border-[#ff0040] bg-[#ff0040]/10' : 'border-red-300 bg-red-50 rounded-lg'}`}>
+              <div className="flex items-center gap-2">
+                <AlertTriangle className={`w-4 h-4 ${isGamingMode ? 'text-[#ff0040]' : 'text-red-500'}`} />
+                <span className={`text-sm font-bold ${isGamingMode ? 'text-[#ff0040]' : 'text-red-600'}`}>
+                  Account Temporarily Locked
+                </span>
+              </div>
+              <p className={`text-xs mt-1 ${isGamingMode ? 'text-[#b8b8c8]' : 'text-red-500'}`}>
+                Please wait {Math.ceil(blockedFor / 60)} minutes before trying again.
+              </p>
+            </div>
+          )}
+          
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => { setPassword(e.target.value); setError('') }}
-              onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              className={`w-full border-2 p-3 text-sm outline-none pr-10 ${isGamingMode ? 'bg-[#0a0a0f] border-[#2a2a4e] text-white focus:border-[#ffd700]' : 'bg-white border-gray-300 text-gray-900 focus:border-amber-500'}`}
+              onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleSubmit()}
+              className={`w-full border-2 p-3 text-sm outline-none pr-10 ${isGamingMode ? 'bg-[#0a0a0f] border-[#2a2a4e] text-white focus:border-[#ffd700]' : 'bg-white border-gray-300 text-gray-900 focus:border-amber-500'} ${blockedFor ? 'opacity-50 cursor-not-allowed' : ''}`}
               placeholder="Enter password..."
               autoFocus
+              disabled={isLoading || !!blockedFor}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className={`absolute right-3 top-1/2 -translate-y-1/2 ${isGamingMode ? 'text-[#8888aa] hover:text-white' : 'text-gray-400 hover:text-gray-600'}`}
+              disabled={blockedFor !== null}
             >
               {showPassword ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
             </button>
           </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          
+          {error && (
+            <div className={`p-2 ${isGamingMode ? 'bg-[#ff0040]/10 border-l-2 border-[#ff0040]' : 'bg-red-50 border-l-2 border-red-500'}`}>
+              <p className={`text-sm ${isGamingMode ? 'text-[#ff0040]' : 'text-red-600'}`}>{error}</p>
+              {remainingAttempts !== null && remainingAttempts > 0 && (
+                <p className={`text-xs mt-1 ${isGamingMode ? 'text-[#8888aa]' : 'text-gray-500'}`}>
+                  {remainingAttempts} attempt{remainingAttempts !== 1 ? 's' : ''} remaining
+                </p>
+              )}
+            </div>
+          )}
+          
           <div className="flex gap-2">
-            <Button variant="outline" className={`flex-1 border-2 ${isGamingMode ? 'border-[#8888aa] text-[#8888aa]' : 'border-gray-300 text-gray-600'}`} onClick={() => onOpenChange(false)}>
+            <Button 
+              variant="outline" 
+              className={`flex-1 border-2 ${isGamingMode ? 'border-[#8888aa] text-[#8888aa]' : 'border-gray-300 text-gray-600'}`} 
+              onClick={() => onOpenChange(false)}
+              disabled={isLoading}
+            >
               Cancel
             </Button>
-            <Button className={`flex-1 font-bold ${isGamingMode ? 'bg-[#ffd700] text-[#0a0a0f]' : 'bg-amber-500 text-white'}`} onClick={handleSubmit}>
-              <Key className="w-4 h-4 mr-2" />
-              Unlock
+            <Button 
+              className={`flex-1 font-bold ${isGamingMode ? 'bg-[#ffd700] text-[#0a0a0f]' : 'bg-amber-500 text-white'}`} 
+              onClick={handleSubmit}
+              disabled={isLoading || !!blockedFor}
+            >
+              {isLoading ? (
+                <>
+                  <LoadingSpinner size="sm" className="mr-2" />
+                  Verifying...
+                </>
+              ) : (
+                <>
+                  <Key className="w-4 h-4 mr-2" />
+                  Unlock
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -2389,42 +2467,68 @@ function AppContent() {
     setIsClient(true)
   }, [])
 
-  // Check admin access - only visible on localhost or with secret URL parameter
+  // Check admin access - uses secure server-side authentication
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    // Check if on localhost
-    const isLocalhost = window.location.hostname === 'localhost' ||
-                        window.location.hostname === '127.0.0.1' ||
-                        window.location.hostname.startsWith('192.168.')
+    const checkAdminAccess = async () => {
+      // Check if on localhost (still allow for development)
+      const isLocalhost = window.location.hostname === 'localhost' ||
+                          window.location.hostname === '127.0.0.1' ||
+                          window.location.hostname.startsWith('192.168.')
 
-    // Check for secret URL parameter (format: ?admin=YOUR_SECRET_KEY)
-    const urlParams = new URLSearchParams(window.location.search)
-    const adminKey = urlParams.get('admin')
-    
-    // Valid secrets - from environment variable
-    const envSecret = process.env.NEXT_PUBLIC_ADMIN_SECRET
-    const isValidSecret = adminKey && envSecret && adminKey === envSecret
+      // Check for secret URL parameter (format: ?admin=YOUR_SECRET_KEY)
+      const urlParams = new URLSearchParams(window.location.search)
+      const adminKey = urlParams.get('admin')
 
-    // Check localStorage for previously granted access
-    const wasGranted = localStorage.getItem('genlayer-admin-granted')
+      // If URL has admin key, verify it with server
+      if (adminKey) {
+        try {
+          const response = await fetch('/api/admin/verify', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ secretKey: adminKey }),
+          })
 
-    if (isLocalhost || isValidSecret || wasGranted === 'true') {
-      // Use queueMicrotask to avoid cascading renders warning
-      queueMicrotask(() => {
+          if (response.ok) {
+            const data = await response.json()
+            if (data.success) {
+              setIsAdminAccess(true)
+              // Clear the admin param from URL for security
+              urlParams.delete('admin')
+              const newUrl = urlParams.toString()
+                ? `${window.location.pathname}?${urlParams.toString()}`
+                : window.location.pathname
+              window.history.replaceState({}, '', newUrl)
+              return
+            }
+          }
+        } catch (err) {
+          console.error('Failed to verify admin key:', err)
+        }
+      }
+
+      // Check if already has valid session (via cookie)
+      try {
+        const response = await fetch('/api/admin/verify')
+        const data = await response.json()
+        if (data.authenticated) {
+          setIsAdminAccess(true)
+          return
+        }
+      } catch (err) {
+        // Session check failed, continue
+      }
+
+      // Allow localhost for development only
+      if (isLocalhost) {
         setIsAdminAccess(true)
-      })
-      
-      // Save to localStorage when granted via URL
-      if (isValidSecret) {
-        localStorage.setItem('genlayer-admin-granted', 'true')
-        urlParams.delete('admin')
-        const newUrl = urlParams.toString()
-          ? `${window.location.pathname}?${urlParams.toString()}`
-          : window.location.pathname
-        window.history.replaceState({}, '', newUrl)
       }
     }
+
+    checkAdminAccess()
   }, [])
 
   // Load custom events from localStorage
