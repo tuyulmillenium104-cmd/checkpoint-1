@@ -18,8 +18,8 @@ self.addEventListener('push', (event) => {
   event.waitUntil(
     self.registration.showNotification(title, {
       body: body,
-      icon: '/genlayer-logo.jpg',
-      badge: '/genlayer-logo.jpg',
+      icon: '/icon-192.png',
+      badge: '/icon-64.png',
       tag: data.tag || 'genlayer-alarm',
       requireInteraction: true,
       vibrate: [200, 100, 200, 100, 200],
