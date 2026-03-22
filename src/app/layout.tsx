@@ -37,15 +37,28 @@ export const metadata: Metadata = {
   authors: [{ name: "GenLayer Community" }],
   icons: {
     icon: [
-      { url: "/genlayer-logo.jpg", type: "image/jpeg", sizes: "any" },
+      { url: "/favicon.png", type: "image/png", sizes: "32x32" },
+      { url: "/icon-16.png", type: "image/png", sizes: "16x16" },
+      { url: "/icon-32.png", type: "image/png", sizes: "32x32" },
     ],
-    apple: "/genlayer-logo.jpg",
+    apple: [
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    other: [
+      { rel: "icon", url: "/icon-48.png", type: "image/png", sizes: "48x48" },
+    ],
   },
   openGraph: {
     title: "GenLayer Event Alarm",
     description: "Track GenLayer weekly events with countdown timer",
     type: "website",
-    images: ["/genlayer-logo.jpg"],
+    images: ["/icon-512.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GenLayer Event Alarm",
+    description: "Track GenLayer weekly events with countdown timer",
+    images: ["/icon-512.png"],
   },
 };
 
