@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Vercel handles output automatically, no need for standalone
+  // Use webpack instead of Turbopack for better Tailwind CSS v3 compatibility
   typescript: {
     ignoreBuildErrors: true,
   },
