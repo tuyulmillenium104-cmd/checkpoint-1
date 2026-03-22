@@ -3175,22 +3175,22 @@ function AppContent() {
         )}
         
         <div className="max-w-5xl mx-auto px-3 sm:px-4 py-2 sm:py-3">
-          {/* Main Header Row */}
-          <div className="flex items-center justify-between gap-2 sm:gap-4">
+          {/* Main Header Row - Mobile: 2 rows, Desktop: single row */}
+          <div className="flex flex-wrap items-center justify-between gap-1 sm:gap-4">
             {/* Left: Branding */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center relative ${isGamingMode ? 'border-3 border-[#00fff7] bg-[#12121a] pixel-shadow' : 'rounded-lg bg-muted border border-border'}`}>
+            <div className="flex items-center gap-2 sm:gap-3 order-1">
+              <div className={`w-9 h-9 sm:w-12 sm:h-12 flex items-center justify-center relative ${isGamingMode ? 'border-3 border-[#00fff7] bg-[#12121a] pixel-shadow' : 'rounded-lg bg-muted border border-border'}`}>
                 <img 
                   src="/genlayer-logo.jpg" 
                   alt="GenLayer" 
-                  className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+                  className="w-7 h-7 sm:w-10 sm:h-10 object-contain"
                 />
                 {isGamingMode && (
                   <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-[#39ff14] animate-pulse" />
                 )}
               </div>
               <div>
-                <h1 className={`text-base sm:text-xl font-bold ${isGamingMode ? 'text-[#00fff7] neon-text-cyan font-pixel' : 'text-foreground'}`}>
+                <h1 className={`text-xs sm:text-xl font-bold ${isGamingMode ? 'text-[#00fff7] neon-text-cyan font-pixel' : 'text-foreground'}`}>
                   {t('app.title')}
                 </h1>
                 {isGamingMode && (
@@ -3199,31 +3199,32 @@ function AppContent() {
               </div>
             </div>
 
-            {/* Center: Clock - Show on both mobile and desktop */}
-            <div className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 ${isGamingMode ? 'border-2 sm:border-3 border-[#2a2a4e] bg-[#12121a] pixel-glow' : 'bg-muted rounded-lg'}`}>
-              <Clock className={`w-3 h-3 sm:w-4 sm:h-4 ${isGamingMode ? 'text-[#00fff7] pulse-neon' : 'text-primary'}`} />
-              <span className={`text-sm sm:text-lg font-bold ${isGamingMode ? 'text-[#00fff7]' : 'text-foreground font-mono'}`}>{currentTime}</span>
-              <span className={`text-[10px] sm:text-sm font-semibold hidden sm:inline ${isGamingMode ? 'text-[#ff00ff]' : 'text-muted-foreground'}`}>{language === 'id' ? 'WIB' : 'UTC'}</span>
-            </div>
-
-            {/* Right: Actions */}
-            <div className="flex items-center gap-1 sm:gap-2">
-              {/* Alarm Badge */}
+            {/* Right: Actions - Always visible, compact on mobile */}
+            <div className="flex items-center gap-1 sm:gap-2 order-2 ml-auto">
+              {/* Alarm Badge - Compact on mobile */}
               {isClient && alarmEnabled && (
                 <button
                   onClick={() => setAlarmListOpen(true)}
-                  className={`flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold transition-colors ${isGamingMode ? 'border-2 sm:border-3 border-[#39ff14] text-[#39ff14] bg-[#39ff14]/10 hover:bg-[#39ff14]/30' : 'border border-primary text-primary bg-primary/10 rounded-md hover:bg-primary/20'}`}
+                  className={`flex items-center justify-center w-9 h-9 sm:w-auto sm:px-3 sm:py-2 text-xs sm:text-sm font-bold transition-colors touchable ${isGamingMode ? 'border-2 sm:border-3 border-[#39ff14] text-[#39ff14] bg-[#39ff14]/10 hover:bg-[#39ff14]/30' : 'border border-primary text-primary bg-primary/10 rounded-md hover:bg-primary/20'}`}
+                  title={`${alarmedEvents.size} alarms set`}
                 >
-                  <BellRing className="w-3 h-3 sm:w-4 sm:h-4 animate-pulse" />
-                  <span className="hidden sm:inline">{alarmedEvents.size}</span>
+                  <BellRing className="w-4 h-4 sm:w-4 sm:h-4 animate-pulse" />
+                  <span className="hidden sm:inline ml-1">{alarmedEvents.size}</span>
                 </button>
               )}
               
               {/* Language */}
               <LanguageToggle isGamingMode={isGamingMode} />
               
-              {/* Theme */}
+              {/* Theme - Always visible */}
               <ThemeToggle />
+            </div>
+
+            {/* Center: Clock - Full width on mobile, centered on desktop */}
+            <div className={`flex items-center justify-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 order-3 w-full sm:w-auto mt-1 sm:mt-0 ${isGamingMode ? 'border-2 sm:border-3 border-[#2a2a4e] bg-[#12121a]' : 'bg-muted rounded-lg'}`}>
+              <Clock className={`w-3 h-3 sm:w-4 sm:h-4 ${isGamingMode ? 'text-[#00fff7] pulse-neon' : 'text-primary'}`} />
+              <span className={`text-base sm:text-lg font-bold ${isGamingMode ? 'text-[#00fff7]' : 'text-foreground font-mono'}`}>{currentTime}</span>
+              <span className={`text-[10px] sm:text-sm font-semibold ${isGamingMode ? 'text-[#ff00ff]' : 'text-muted-foreground'}`}>{language === 'id' ? 'WIB' : 'UTC'}</span>
             </div>
           </div>
 
@@ -3436,11 +3437,11 @@ function AppContent() {
             {/* Test Buttons */}
             <div className={`p-3 ${isGamingMode ? 'bg-[#0a0a0f] border-2 border-[#ff0040]/50' : 'bg-card border border-border rounded-lg'} mb-3`}>
               <div className={`text-xs mb-2 ${isGamingMode ? 'text-[#ffd700] font-bold' : 'text-primary font-semibold'}`}>🎮 TEST ALARM:</div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 {/* Instant Test - Toast Only */}
                 <Button
                   size="sm"
-                  className={`text-xs px-3 py-2 font-bold ${isGamingMode ? 'bg-[#39ff14] text-[#0a0a0f] hover:bg-[#39ff14]/80' : 'bg-primary text-primary-foreground hover:bg-primary/90'}`}
+                  className={`text-[10px] sm:text-xs px-2 sm:px-3 py-1.5 sm:py-2 font-bold ${isGamingMode ? 'bg-[#39ff14] text-[#0a0a0f] hover:bg-[#39ff14]/80' : 'bg-primary text-primary-foreground hover:bg-primary/90'}`}
                   onClick={() => {
                     showBrowserNotification(
                       '🔔 Test Alarm',
@@ -3455,20 +3456,20 @@ function AppContent() {
                 </Button>
                 
                 {/* Background Test Buttons */}
-                <span className={`text-xs self-center ml-2 ${isGamingMode ? 'text-[#8888aa]' : 'text-muted-foreground'}`}>Background Test:</span>
+                <span className={`text-[10px] sm:text-xs self-center ml-1 sm:ml-2 ${isGamingMode ? 'text-[#8888aa]' : 'text-muted-foreground'}`}>Bg:</span>
                 {[5, 10, 15, 30].map((seconds) => (
                   <Button
                     key={seconds}
                     size="sm"
                     disabled={backgroundTestCountdown !== null}
-                    className={`text-xs px-3 py-2 font-bold ${
+                    className={`text-[10px] sm:text-xs px-2 sm:px-3 py-1.5 sm:py-2 font-bold ${
                       backgroundTestCountdown !== null 
                         ? isGamingMode ? 'border-2 border-[#8888aa] text-[#8888aa] cursor-not-allowed' : 'border border-muted-foreground text-muted-foreground cursor-not-allowed opacity-50'
                         : isGamingMode ? 'border-2 border-[#00fff7] text-[#00fff7] hover:bg-[#00fff7]/20' : 'border border-primary text-primary hover:bg-primary/10'
                     }`}
                     onClick={() => startBackgroundTest(seconds)}
                   >
-                    ⏱️ {seconds}s
+                    {seconds}s
                   </Button>
                 ))}
               </div>
@@ -4119,32 +4120,36 @@ function AppContent() {
               {allEvents.filter(e => alarmedEvents.has(e.id)).map((event) => (
                 <div 
                   key={event.id}
-                  className={`flex items-center justify-between p-3 transition-colors ${isGamingMode ? 'border-3 border-[#ffd700]/30 bg-[#ffd700]/5 hover:bg-[#ffd700]/10' : 'border border-yellow-500/30 bg-yellow-100/50 dark:bg-yellow-900/10 hover:bg-yellow-200/50 dark:hover:bg-yellow-900/20 rounded-lg'}`}
+                  className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 transition-colors ${isGamingMode ? 'border-3 border-[#ffd700]/30 bg-[#ffd700]/5 hover:bg-[#ffd700]/10' : 'border border-yellow-500/30 bg-yellow-100/50 dark:bg-yellow-900/10 hover:bg-yellow-200/50 dark:hover:bg-yellow-900/20 rounded-lg'}`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                     {event.icon && (
                       <img 
                         src={event.icon} 
                         alt={event.name}
-                        className={`w-12 h-12 ${isGamingMode ? 'border-2 border-[#ffd700] pixel-shadow' : 'border border-yellow-500 rounded-lg'}`}
+                        className={`w-10 h-10 sm:w-12 sm:h-12 shrink-0 ${isGamingMode ? 'border-2 border-[#ffd700] pixel-shadow' : 'border border-yellow-500 rounded-lg'}`}
                         style={{ imageRendering: 'pixelated' }}
                       />
                     )}
-                    <Clock className={`w-5 h-5 ${isGamingMode ? 'text-[#ffd700] pulse-neon' : 'text-yellow-600 dark:text-yellow-400'}`} />
-                    <span className={`text-base font-pixel-body font-bold ${isGamingMode ? 'text-[#ffd700]' : 'text-yellow-600 dark:text-yellow-400'}`}>{formatTimeWithLabel(event.timeUTC)}</span>
-                    <span className={`text-base font-pixel-body ${isGamingMode ? 'text-[#e0e0e0]' : ''}`}>{event.name}</span>
-                    <span className={`text-sm font-pixel-body ${isGamingMode ? 'text-[#8888aa]' : 'text-muted-foreground'}`}>({getDayName(event.day)})</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Clock className={`w-4 h-4 shrink-0 ${isGamingMode ? 'text-[#ffd700] pulse-neon' : 'text-yellow-600 dark:text-yellow-400'}`} />
+                        <span className={`text-sm sm:text-base font-bold ${isGamingMode ? 'text-[#ffd700]' : 'text-yellow-600 dark:text-yellow-400'}`}>{formatTimeWithLabel(event.timeUTC)}</span>
+                        <span className={`text-sm truncate ${isGamingMode ? 'text-[#e0e0e0]' : ''}`}>{event.name}</span>
+                      </div>
+                      <span className={`text-xs ${isGamingMode ? 'text-[#8888aa]' : 'text-muted-foreground'}`}>({getDayName(event.day)})</span>
+                    </div>
                   </div>
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className={`h-8 text-xs ${isGamingMode ? 'text-[#ff0040] hover:text-[#ff0040] hover:bg-[#ff0040]/10 border-2 border-[#ff0040]/50 font-bold' : 'text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 border border-red-300'}`}
+                    className={`h-8 w-full sm:w-auto text-xs touchable ${isGamingMode ? 'text-[#ff0040] hover:text-[#ff0040] hover:bg-[#ff0040]/10 border-2 border-[#ff0040]/50 font-bold' : 'text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 border border-red-300'}`}
                     onClick={(e) => {
                       e.stopPropagation()
                       toggleEventAlarm(event.id)
                     }}
                   >
-                    X
+                    ✕ Remove
                   </Button>
                 </div>
               ))}
