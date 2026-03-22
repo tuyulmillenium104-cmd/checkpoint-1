@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -40,12 +41,29 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 local-*
+
+# ZAI / Development files
 .claude
 .z-ai-config
+.zscripts/
+skills/
+examples/
 dev.log
-test
-prompt
-
 server.log
-# Skills directory
-/skills/
+worklog.md
+download/
+upload/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+ehthumbs.db
+
+# Database (keep schema, ignore data)
+db/*.db
+db/*.db-journal
